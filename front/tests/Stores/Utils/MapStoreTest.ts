@@ -65,7 +65,7 @@ describe("Main store", () => {
             string,
             {
                 foo: string;
-                store: Writable<string>;
+                store: Writable<string | undefined>;
             }
         >();
 
@@ -84,6 +84,35 @@ describe("Main store", () => {
 
         expect(get(fooStore)).toBe("newVal");
 
+        mapStore.get("foo")?.store.set("newVal2");
+
+        expect(get(fooStore)).toBe("newVal2");
+
+        const anotherFooStore = mapStore.getNestedStore("foo", (value) => {
+            return value.store;
+        });
+
+        expect(get(anotherFooStore)).toBe("newVal2");
+
+        const anotherValue: string | undefined = undefined;
+        const anotherUnsubscribe = anotherFooStore.subscribe((val) => anotherValue);
+
+        mapStore.get("foo")?.store.set(undefined);
+        expect(get(fooStore)).toBeUndefined();
+        expect(anotherValue).toBeUndefined();
+        mapStore.get("foo")?.store.set(undefined);
+        expect(get(fooStore)).toBeUndefined();
+
+        mapStore.delete("foo");
+        mapStore.delete("foo");
+
+        anotherUnsubscribe();
+
+        // Try calling unsusbscribe twice in a row. This should not cause issues.
+        //anotherUnsubscribe();
+
+        /*expect(get(anotherFooStore)).toBe("anotherVal");*/
+
         mapStore.set("foo", {
             foo: "bar",
             store: writable("anotherVal"),
@@ -91,8 +120,12 @@ describe("Main store", () => {
 
         expect(get(fooStore)).toBe("anotherVal");
 
+        mapStore.get("foo")?.store.set(undefined);
         mapStore.delete("foo");
 
+        expect(get(fooStore)).toBeUndefined();
+
+        mapStore.delete("foo");
         expect(get(fooStore)).toBeUndefined();
     });
 });
