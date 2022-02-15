@@ -2195,12 +2195,11 @@ ${escapedMessage}
     public startBBBMeeting(meetingId: string, clientURL: string): void {
         this.connection?.setSilent(true);
         // mediaManager.hideGameOverlay();
-        const clientOrigin = new URL(clientURL);
 
         const coWebsite = new SimpleCoWebsite(
-            clientOrigin,
+            new URL(clientURL),
             true,
-            `microphone ${clientOrigin}; camera ${clientOrigin}`,
+            "microphone *; camera *; display-capture *; clipboard-read *; clipboard-write *;",
             undefined,
             false);
         coWebsiteManager.loadCoWebsite(coWebsite)
