@@ -1,7 +1,7 @@
 import { HtmlUtils } from "./HtmlUtils";
 import { Subject } from "rxjs";
 import { waScaleManager } from "../Phaser/Services/WaScaleManager";
-import { coWebsites, coWebsitesNotAsleep, jitsiCoWebsite, mainCoWebsite } from "../Stores/CoWebsiteStore";
+import { coWebsites, coWebsitesNotAsleep, bbbCoWebsite, jitsiCoWebsite, mainCoWebsite } from "../Stores/CoWebsiteStore";
 import { get } from "svelte/store";
 import { embedScreenLayout, highlightedEmbedScreen } from "../Stores/EmbedScreensStore";
 import { isMediaBreakpointDown } from "../Utils/BreakpointsUtils";
@@ -567,6 +567,10 @@ class CoWebsiteManager {
 
     public searchJitsi(): CoWebsite | undefined {
         return get(jitsiCoWebsite);
+    }
+
+    public searchBBB(): CoWebsite | undefined {
+        return get(bbbCoWebsite);
     }
 
     public addCoWebsiteToStore(coWebsite: CoWebsite, position: number | undefined) {

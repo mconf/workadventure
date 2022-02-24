@@ -1,6 +1,7 @@
 import { derived, get, writable } from "svelte/store";
 import type { CoWebsite } from "../WebRtc/CoWebsite/CoWesbite";
 import { JitsiCoWebsite } from "../WebRtc/CoWebsite/JitsiCoWebsite";
+import { BBBCoWebsite } from "../WebRtc/CoWebsite/BBBCoWebsite";
 
 function createCoWebsiteStore() {
     const { subscribe, set, update } = writable(Array<CoWebsite>());
@@ -53,4 +54,8 @@ export const mainCoWebsite = derived([coWebsites], ([$coWebsites]) =>
 
 export const jitsiCoWebsite = derived([coWebsites], ([$coWebsites]) =>
     $coWebsites.find((coWebsite) => coWebsite instanceof JitsiCoWebsite)
+);
+
+export const bbbCoWebsite = derived([coWebsites], ([$coWebsites]) =>
+    $coWebsites.find((coWebsite) => coWebsite instanceof BBBCoWebsite)
 );
