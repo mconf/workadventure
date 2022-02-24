@@ -32,6 +32,7 @@ import {
 import { ProtobufClientUtils } from "../../Network/ProtobufClientUtils";
 import { Room } from "../../Connexion/Room";
 import { jitsiFactory } from "../../WebRtc/JitsiFactory";
+import { bbbFactory } from "../../WebRtc/BBBFactory";
 import { TextureError } from "../../Exception/TextureError";
 import { localUserStore } from "../../Connexion/LocalUserStore";
 import { HtmlUtils } from "../../WebRtc/HtmlUtils";
@@ -101,6 +102,7 @@ import { locale } from "../../i18n/i18n-svelte";
 import { JitsiCoWebsite } from "../../WebRtc/CoWebsite/JitsiCoWebsite";
 import { SimpleCoWebsite } from "../../WebRtc/CoWebsite/SimpleCoWebsite";
 import type { CoWebsite } from "../../WebRtc/CoWebsite/CoWesbite";
+import { coWebsites } from "../../Stores/CoWebsiteStore";
 export interface GameSceneInitInterface {
     initPosition: PointInterface | null;
     reconnecting: boolean;
@@ -822,7 +824,7 @@ export class GameScene extends DirtyScene {
                  * Triggered when we receive the URL to join a meeting on BBB
                  */
                 this.connection.bbbMeetingClientURLMessageStream.subscribe((message) => {
-                    this.startBBBMeeting(message.meetingId, message.clientURL);
+                    bbbFactory.start(message.clientURL);
                 });
 
                 this.messageSubscription = this.connection.worldFullMessageStream.subscribe((message) => {
@@ -1037,8 +1039,10 @@ export class GameScene extends DirtyScene {
         this.gameMap.onPropertyChange(GameMapProperties.BBB_MEETING, (newValue, oldValue, allProps) => {
             if (newValue === undefined) {
                 layoutManagerActionStore.removeAction('bbbMeeting');
-                this.stopBBBMeeting();
+                bbbFactory.setStopped(true);
+                bbbFactory.stop();
             } else {
+                bbbFactory.setStopped(false);
                 this.connection?.emitJoinBBBMeeting(newValue as string, allProps);
             }
         });
@@ -2187,35 +2191,6 @@ ${escapedMessage}
 
     public stopJitsi(): void {
         const coWebsite = coWebsiteManager.searchJitsi();
-        if (coWebsite) {
-            coWebsiteManager.closeCoWebsite(coWebsite);
-        }
-    }
-
-    public startBBBMeeting(meetingId: string, clientURL: string): void {
-        this.connection?.setSilent(true);
-        // mediaManager.hideGameOverlay();
-
-        const coWebsite = new SimpleCoWebsite(
-            new URL(clientURL),
-            true,
-            "microphone *; camera *; display-capture *; clipboard-read *; clipboard-write *;",
-            undefined,
-            false);
-        coWebsiteManager.loadCoWebsite(coWebsite)
-            .catch((e) => console.error(`Error on opening co-website: ${e}`));
-    }
-
-    public stopBBBMeeting(): void {
-        const coWebsite = coWebsiteManager.getCoWebsites().find((coWebsite: CoWebsite) => {
-            const iframe = coWebsite.getIframe();
-            if (!iframe) {
-                return false;
-            }
-
-            return iframe.id.toLowerCase().includes("bbbMeeting");
-        });
-
         if (coWebsite) {
             coWebsiteManager.closeCoWebsite(coWebsite);
         }
