@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
 
     import { ICON_URL } from "../../Enum/EnvironmentVariable";
-    import { coWebsitesNotAsleep, mainCoWebsite, jitsiCoWebsite } from "../../Stores/CoWebsiteStore";
+    import { coWebsitesNotAsleep, mainCoWebsite, jitsiCoWebsite, bbbCoWebsite } from "../../Stores/CoWebsiteStore";
     import { highlightedEmbedScreen } from "../../Stores/EmbedScreensStore";
     import type { CoWebsite } from "../../WebRtc/CoWebsite/CoWesbite";
     import { iframeStates } from "../../WebRtc/CoWebsiteManager";
@@ -16,10 +16,12 @@
     let iconLoaded = false;
     let state = coWebsite.getStateSubscriber();
     let isJitsi: boolean = false;
+    let isBBB: boolean = false;
 
     onMount(() => {
         isJitsi = Boolean($jitsiCoWebsite && $jitsiCoWebsite.getId() === coWebsite.getId());
-        icon.src = isJitsi
+        isBBB = Boolean($bbbCoWebsite && $bbbCoWebsite.getId() === coWebsite.getId());
+        icon.src = isJitsi || isBBB
             ? "/resources/logos/meet.svg"
             : `${ICON_URL}/icon?url=${coWebsite.getUrl().hostname}&size=64..96..256&fallback_icon_color=14304c`;
         icon.alt = coWebsite.getUrl().hostname;
@@ -85,7 +87,7 @@
     <img
         class="cowebsite-icon noselect nes-pointer"
         class:hide={!iconLoaded}
-        class:jitsi={isJitsi}
+        class:meet={isJitsi || isBBB}
         bind:this={icon}
         on:dragstart|preventDefault={noDrag}
         alt=""
@@ -316,7 +318,7 @@
                 display: none;
             }
 
-            &.jitsi {
+            &.meet {
                 filter: invert(100%);
                 -webkit-filter: invert(100%);
                 padding: 7px;
