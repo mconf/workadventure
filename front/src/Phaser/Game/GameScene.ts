@@ -1626,6 +1626,7 @@ ${escapedMessage}
         }
 
         this.stopJitsi();
+        bbbFactory.stop();
         audioManagerFileStore.unloadAudio();
         // We are completely destroying the current scene to avoid using a half-backed instance when coming back to the same map.
         this.connection?.closeConnection();
