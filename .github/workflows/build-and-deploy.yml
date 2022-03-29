@@ -2,7 +2,7 @@ name: Build, push and deploy Docker image
 
 on:
   push:
-    branches: [feature-bbb-integration-v3,feature-bbb-integration-v4]
+    branches: [master, develop]
   release:
     types: [created]
   pull_request:
