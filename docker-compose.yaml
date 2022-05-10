@@ -63,6 +63,8 @@ services:
       ENABLE_OPENID: "$OPID_CLIENT_ID"
       OPID_PROFILE_SCREEN_PROVIDER: "$OPID_PROFILE_SCREEN_PROVIDER"
       CHAT_URL: //chat.workadventure.localhost
+      PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: "$PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS"
+      PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: "$PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS"
     command: yarn run start
     volumes:
       - ./front:/usr/src/app
