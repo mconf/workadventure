@@ -6,7 +6,6 @@ import { ReconnectingTextures } from "../Reconnecting/ReconnectingScene";
 import { localeDetector } from "../../i18n/locales";
 import { errorScreenStore } from "../../Stores/ErrorScreenStore";
 import { isErrorApiData } from "../../Messages/JsonMessages/ErrorApiData";
-import { connectionManager } from "../../Connexion/ConnectionManager";
 
 export const EntrySceneName = "EntryScene";
 
@@ -25,7 +24,6 @@ export class EntryScene extends Scene {
 
     // From the very start, let's preload images used in the ReconnectingScene.
     preload() {
-        this.load.image(ReconnectingTextures.icon, "static/images/favicons/favicon-32x32.png");
         // Note: arcade.png from the Phaser 3 examples at: https://github.com/photonstorm/phaser3-examples/tree/master/public/assets/fonts/bitmap
         this.load.bitmapFont(ReconnectingTextures.mainFont, "resources/fonts/arcade.png", "resources/fonts/arcade.xml");
         this.load.spritesheet("cat", "resources/characters/pipoya/Cat 01-1.png", { frameWidth: 32, frameHeight: 32 });
@@ -49,9 +47,7 @@ export class EntryScene extends Scene {
                     .catch((err) => {
                         const errorType = isErrorApiData.safeParse(err?.response?.data);
                         if (errorType.success) {
-                            if (errorType.data.type === "unauthorized") {
-                                void connectionManager.logout();
-                            } else if (errorType.data.type === "redirect") {
+                            if (errorType.data.type === "redirect") {
                                 window.location.assign(errorType.data.urlToRedirect);
                             } else errorScreenStore.setError(err?.response?.data);
                         } else {
