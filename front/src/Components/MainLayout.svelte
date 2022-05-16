@@ -38,6 +38,9 @@
     import { actionsMenuStore } from "../Stores/ActionsMenuStore";
     import ActionsMenu from "./ActionsMenu/ActionsMenu.svelte";
     import Lazy from "./Lazy.svelte";
+    import { showDesktopCapturerSourcePicker } from "../Stores/ScreenSharingStore";
+    import UiWebsiteContainer from "./UI/Website/UIWebsiteContainer.svelte";
+    import { uiWebsitesStore } from "../Stores/UIWebsiteStore";
 
     let mainLayout: HTMLDivElement;
 
@@ -67,6 +70,11 @@
     </aside>
 
     <section id="main-layout-main">
+        <Lazy
+            when={$showDesktopCapturerSourcePicker}
+            component={() => import("./Video/DesktopCapturerSourcePicker.svelte")}
+        />
+
         {#if $menuVisiblilityStore}
             <Menu />
         {/if}
@@ -121,6 +129,10 @@
 
         {#if hasEmbedScreen}
             <EmbedScreensContainer />
+        {/if}
+
+        {#if $uiWebsitesStore}
+            <UiWebsiteContainer />
         {/if}
     </section>
 

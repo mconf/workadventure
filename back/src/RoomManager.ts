@@ -16,7 +16,6 @@ import {
     ItemEventMessage,
     JoinBBBMeetingMessage,
     JoinRoomMessage,
-    PlayGlobalMessage,
     PusherToBackMessage,
     QueryJitsiJwtMessage,
     RefreshRoomPromptMessage,
@@ -24,7 +23,6 @@ import {
     SendUserMessage,
     ServerToAdminClientMessage,
     SetPlayerDetailsMessage,
-    SilentMessage,
     UserMovesMessage,
     VariableMessage,
     WebRtcSignalToServerMessage,
@@ -82,8 +80,6 @@ const roomManager: IRoomManagerServer = {
                                 user,
                                 message.getUsermovesmessage() as UserMovesMessage
                             );
-                        } else if (message.hasSilentmessage()) {
-                            socketManager.handleSilentMessage(room, user, message.getSilentmessage() as SilentMessage);
                         } else if (message.hasItemeventmessage()) {
                             socketManager.handleItemEvent(
                                 room,

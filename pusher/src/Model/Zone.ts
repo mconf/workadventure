@@ -18,10 +18,12 @@ import {
     ErrorMessage,
     PlayerDetailsUpdatedMessage,
     SetPlayerDetailsMessage,
+    AvailabilityStatus,
 } from "../Messages/generated/messages_pb";
 import { ClientReadableStream } from "grpc";
-import { PositionDispatcher } from "_Model/PositionDispatcher";
+import { PositionDispatcher } from "../Model/PositionDispatcher";
 import Debug from "debug";
+import { BoolValue, UInt32Value } from "google-protobuf/google/protobuf/wrappers_pb";
 
 const debug = Debug("zone");
 
@@ -48,6 +50,7 @@ export class UserDescriptor {
         private name: string,
         private characterLayers: CharacterLayerMessage[],
         private position: PositionMessage,
+        private status: AvailabilityStatus,
         private visitCardUrl: string | null,
         private companion?: CompanionMessage,
         private outlineColor?: number
@@ -68,6 +71,7 @@ export class UserDescriptor {
             message.getName(),
             message.getCharacterlayersList(),
             position,
+            message.getStatus(),
             message.getVisitcardurl(),
             message.getCompanion(),
             message.getHasoutline() ? message.getOutlinecolor() : undefined
@@ -86,7 +90,11 @@ export class UserDescriptor {
         if (playerDetails.getRemoveoutlinecolor()) {
             this.outlineColor = undefined;
         } else {
-            this.outlineColor = playerDetails.getOutlinecolor();
+            this.outlineColor = playerDetails.getOutlinecolor()?.getValue();
+        }
+        const status = playerDetails.getStatus();
+        if (status !== undefined) {
+            this.status = status;
         }
     }
 
@@ -97,6 +105,7 @@ export class UserDescriptor {
         userJoinedMessage.setName(this.name);
         userJoinedMessage.setCharacterlayersList(this.characterLayers);
         userJoinedMessage.setPosition(this.position);
+        userJoinedMessage.setStatus(this.status);
         if (this.visitCardUrl) {
             userJoinedMessage.setVisitcardurl(this.visitCardUrl);
         }
@@ -125,9 +134,9 @@ export class UserDescriptor {
 export class GroupDescriptor {
     private constructor(
         public readonly groupId: number,
-        private groupSize: number,
+        private groupSize: number | undefined,
         private position: PointMessage,
-        private locked: boolean
+        private locked: boolean | undefined
     ) {}
 
     public static createFromGroupUpdateZoneMessage(message: GroupUpdateZoneMessage): GroupDescriptor {
@@ -150,9 +159,13 @@ export class GroupDescriptor {
             throw new Error("GroupDescriptor.groupId is not an integer: " + this.groupId);
         }
         groupUpdateMessage.setGroupid(this.groupId);
-        groupUpdateMessage.setGroupsize(this.groupSize);
+        if (this.groupSize !== undefined) {
+            groupUpdateMessage.setGroupsize(new UInt32Value().setValue(this.groupSize));
+        }
         groupUpdateMessage.setPosition(this.position);
-        groupUpdateMessage.setLocked(this.locked);
+        if (this.locked !== undefined) {
+            groupUpdateMessage.setLocked(new BoolValue().setValue(this.locked));
+        }
         return groupUpdateMessage;
     }
 }
@@ -415,7 +428,7 @@ export class Zone {
             }
         }
 
-        for (const [groupId, group] of this.groups.entries()) {
+        for (const group of this.groups.values()) {
             this.socketListener.onGroupEnters(group, listener);
         }
 
@@ -424,13 +437,13 @@ export class Zone {
     }
 
     public stopListening(listener: ExSocketInterface): void {
-        for (const [userId, user] of this.users.entries()) {
+        for (const userId of this.users.keys()) {
             if (userId !== listener.userId) {
                 this.socketListener.onUserLeaves(userId, listener);
             }
         }
 
-        for (const [groupId, group] of this.groups.entries()) {
+        for (const groupId of this.groups.keys()) {
             this.socketListener.onGroupLeaves(groupId, listener);
         }
 

@@ -4,7 +4,7 @@ import { RoomConnection } from "./RoomConnection";
 import type { OnConnectInterface, PositionInterface, ViewportInterface } from "./ConnexionModels";
 import { GameConnexionTypes, urlManager } from "../Url/UrlManager";
 import { localUserStore } from "./LocalUserStore";
-import { CharacterTexture, LocalUser } from "./LocalUser";
+import { LocalUser } from "./LocalUser";
 import { Room } from "./Room";
 import { _ServiceWorker } from "../Network/ServiceWorker";
 import { loginSceneVisibleIframeStore } from "../Stores/LoginSceneStore";
@@ -13,7 +13,6 @@ import { analyticsClient } from "../Administration/AnalyticsClient";
 import { axiosWithRetry } from "./AxiosUtils";
 import axios from "axios";
 import { isRegisterData } from "../Messages/JsonMessages/RegisterData";
-import { isAdminApiData } from "../Messages/JsonMessages/AdminApiData";
 import { limitMapStore } from "../Stores/GameStore";
 import { showLimitRoomModalStore } from "../Stores/ModalStore";
 import { gameManager } from "../Phaser/Game/GameManager";
@@ -73,9 +72,7 @@ class ConnectionManager {
 
         //Logout user in pusher and hydra
         const token = localUserStore.getAuthToken();
-        const { authToken } = await Axios.get(`${PUSHER_URL}/logout-callback`, { params: { token } }).then(
-            (res) => res.data
-        );
+        await Axios.get(`${PUSHER_URL}/logout-callback`, { params: { token } }).then((res) => res.data);
         localUserStore.setAuthToken(null);
 
         //Go on login page can permit to clear token and start authentication process
@@ -88,8 +85,7 @@ class ConnectionManager {
      * @return returns a promise to the Room we are going to load OR a pointer to the URL we must redirect to if authentication is needed.
      */
     public async initGameConnexion(): Promise<Room | URL> {
-        const connexionType = urlManager.getGameConnexionType();
-        this.connexionType = connexionType;
+        this.connexionType = urlManager.getGameConnexionType();
         this._currentRoom = null;
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -102,14 +98,15 @@ class ConnectionManager {
             urlParams.delete("token");
         }
 
-        if (connexionType === GameConnexionTypes.login) {
+        if (this.connexionType === GameConnexionTypes.login) {
             this._currentRoom = await Room.createRoom(new URL(localUserStore.getLastRoomUrl()));
             const redirect = this.loadOpenIDScreen();
             if (redirect !== null) {
                 return redirect;
             }
             urlManager.pushRoomIdToUrl(this._currentRoom);
-        } else if (connexionType === GameConnexionTypes.jwt) {
+        } else if (this.connexionType === GameConnexionTypes.jwt) {
+            /** @deprecated */
             if (!token) {
                 const code = urlParams.get("code");
                 const state = urlParams.get("state");
@@ -135,16 +132,23 @@ class ConnectionManager {
                 return redirect;
             }
             urlManager.pushRoomIdToUrl(this._currentRoom);
-        } else if (connexionType === GameConnexionTypes.register) {
-            //@deprecated
+        }
+        //@deprecated
+        else if (this.connexionType === GameConnexionTypes.register) {
             const organizationMemberToken = urlManager.getOrganizationToken();
-            const data = await Axios.post(`${PUSHER_URL}/register`, { organizationMemberToken }).then(
+            const result = await Axios.post(`${PUSHER_URL}/register`, { organizationMemberToken }).then(
                 (res) => res.data
             );
-            if (!isRegisterData(data)) {
-                console.error("Invalid data received from /register route. Data: ", data);
+
+            const registerDataChecking = isRegisterData.safeParse(result);
+
+            if (!registerDataChecking.success) {
+                console.error("Invalid data received from /register route. Data: ", result);
                 throw new Error("Invalid data received from /register route.");
             }
+
+            const data = registerDataChecking.data;
+
             this.localUser = new LocalUser(data.userUuid, data.email);
             this.authToken = data.authToken;
             localUserStore.saveUser(this.localUser);
@@ -165,11 +169,11 @@ class ConnectionManager {
                 )
             );
             urlManager.pushRoomIdToUrl(this._currentRoom);
-        } else if (connexionType === GameConnexionTypes.room || connexionType === GameConnexionTypes.empty) {
+        } else if (this.connexionType === GameConnexionTypes.room || this.connexionType === GameConnexionTypes.empty) {
             this.authToken = localUserStore.getAuthToken();
 
             let roomPath: string;
-            if (connexionType === GameConnexionTypes.empty) {
+            if (this.connexionType === GameConnexionTypes.empty) {
                 roomPath = localUserStore.getLastRoomUrl();
                 //get last room path from cache api
                 try {
@@ -286,12 +290,37 @@ class ConnectionManager {
             );
 
             connection.onConnectError((error: object) => {
-                console.log("An error occurred while connecting to socket server. Retrying");
+                console.log("onConnectError => An error occurred while connecting to socket server. Retrying");
                 reject(error);
             });
 
             connection.connectionErrorStream.subscribe((event: CloseEvent) => {
-                console.log("An error occurred while connecting to socket server. Retrying");
+                console.info(
+                    "An error occurred while connecting to socket server. Retrying => Event: ",
+                    event.reason,
+                    event.code,
+                    event
+                );
+
+                //However, Chrome will rarely report any close code 1006 reasons to the Javascript side.
+                //This is likely due to client security rules in the WebSocket spec to prevent abusing WebSocket.
+                //(such as using it to scan for open ports on a destination server, or for generating lots of connections for a denial-of-service attack).
+                // more detail here: https://www.rfc-editor.org/rfc/rfc6455#section-7.4.1
+                if (event.code === 1006) {
+                    //check cookies
+                    const cookies = document.cookie.split(";");
+                    for (const cookie of cookies) {
+                        //check id cookie posthog exist
+                        const numberIndexPh = cookie.indexOf("_posthog=");
+                        if (numberIndexPh !== -1) {
+                            //if exist, remove posthog cookie
+                            document.cookie =
+                                cookie.slice(0, numberIndexPh + 9) +
+                                "; domain=.workadventu.re; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+                        }
+                    }
+                }
+
                 reject(
                     new Error(
                         "An error occurred while connecting to socket server. Retrying. Code: " +
@@ -305,9 +334,9 @@ class ConnectionManager {
             connection.roomJoinedMessageStream.subscribe((connect: OnConnectInterface) => {
                 resolve(connect);
             });
-        }).catch((err) => {
+        }).catch(() => {
             // Let's retry in 4-6 seconds
-            return new Promise<OnConnectInterface>((resolve, reject) => {
+            return new Promise<OnConnectInterface>((resolve) => {
                 this.reconnectingTimeout = setTimeout(() => {
                     //todo: allow a way to break recursion?
                     //todo: find a way to avoid recursive function. Otherwise, the call stack will grow indefinitely.
@@ -359,15 +388,13 @@ class ConnectionManager {
 
         if (locale) {
             try {
-                if (locales.indexOf(locale) == -1) {
-                    locales.forEach((l) => {
-                        if (l.startsWith(locale.split("-")[0])) {
-                            setCurrentLocale(l);
-                            return;
-                        }
-                    });
+                if (locales.indexOf(locale) !== -1) {
+                    await setCurrentLocale(locale as Locales);
                 } else {
-                    setCurrentLocale(locale as Locales);
+                    const nonRegionSpecificLocale = locales.find((l) => l.startsWith(locale.split("-")[0]));
+                    if (nonRegionSpecificLocale) {
+                        await setCurrentLocale(nonRegionSpecificLocale);
+                    }
                 }
             } catch (err) {
                 console.warn("Could not set locale", err);

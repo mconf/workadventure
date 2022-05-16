@@ -8,6 +8,7 @@ export enum GameMapProperties {
     EXIT_URL = "exitUrl",
     EXIT_SCENE_URL = "exitSceneUrl",
     FONT_FAMILY = "font-family",
+    FOCUSABLE = "focusable",
     JITSI_ADMIN_ROOM_TAG = "jitsiRoomAdminTag",
     JITSI_CONFIG = "jitsiConfig",
     JITSI_INTERFACE_CONFIG = "jitsiInterfaceConfig",
@@ -16,6 +17,7 @@ export enum GameMapProperties {
     JITSI_TRIGGER_MESSAGE = "jitsiTriggerMessage",
     JITSI_URL = "jitsiUrl",
     JITSI_WIDTH = "jitsiWidth",
+    JITSI_NO_PREFIX = "jitsiNoPrefix",
     NAME = "name",
     OPEN_TAB = "openTab",
     OPEN_WEBSITE = "openWebsite",
@@ -36,4 +38,5 @@ export enum GameMapProperties {
     URL = "url",
     WRITABLE_BY = "writableBy",
     ZONE = "zone",
+    ZOOM_MARGIN = "zoom_margin",
 }

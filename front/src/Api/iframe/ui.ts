@@ -14,6 +14,8 @@ import {
     isActionsMenuActionClickedEvent,
 } from "../Events/ActionsMenuActionClickedEvent";
 import { Observable, Subject } from "rxjs";
+import type { UIWebsiteCommands } from "./Ui/UIWebsite";
+import website from "./Ui/UIWebsite";
 
 let popupId = 0;
 const popups: Map<number, Popup> = new Map<number, Popup>();
@@ -33,14 +35,6 @@ interface MenuDescriptor {
 }
 
 export type MenuOptions = RequireOnlyOne<MenuDescriptor, "callback" | "iframe">;
-
-interface ZonedPopupOptions {
-    zone: string;
-    objectLayerName?: string;
-    popupText: string;
-    delay?: number;
-    popupOptions: Array<ButtonDescriptor>;
-}
 
 export interface ActionMessageOptions {
     message: string;
@@ -277,11 +271,11 @@ export class WorkAdventureUiCommands extends IframeApiContribution<WorkAdventure
     }
 
     public displayBubble(): void {
-        sendToWorkadventure({ type: "displayBubble", data: null });
+        sendToWorkadventure({ type: "displayBubble", data: undefined });
     }
 
     public removeBubble(): void {
-        sendToWorkadventure({ type: "removeBubble", data: null });
+        sendToWorkadventure({ type: "removeBubble", data: undefined });
     }
 
     public displayActionMessage(actionMessageOptions: ActionMessageOptions): ActionMessage {
@@ -290,6 +284,10 @@ export class WorkAdventureUiCommands extends IframeApiContribution<WorkAdventure
         });
         actionMessages.set(actionMessage.uuid, actionMessage);
         return actionMessage;
+    }
+
+    get website(): UIWebsiteCommands {
+        return website;
     }
 }
 
