@@ -182,6 +182,7 @@ export class GameScene extends DirtyScene {
     private followUsersColorStoreUnsubscribe!: Unsubscriber;
     private userIsJitsiDominantSpeakerStoreUnsubscriber!: Unsubscriber;
     private jitsiParticipantsCountStoreUnsubscriber!: Unsubscriber;
+    private availabilityStatusStoreUnsubscriber!: Unsubscriber;
 
     private biggestAvailableAreaStoreUnsubscribe!: () => void;
     MapUrlFile: string;
@@ -699,7 +700,7 @@ export class GameScene extends DirtyScene {
             this.tryChangeShowVoiceIndicatorState(this.jitsiDominantSpeaker && this.jitsiParticipantsCount > 1);
         });
 
-        availabilityStatusStore.subscribe((status) => {
+        this.availabilityStatusStoreUnsubscriber = availabilityStatusStore.subscribe((status) => {
             this.connection?.emitPlayerStatusChange(status);
             this.CurrentPlayer.setStatus(status);
         });
@@ -1623,6 +1624,7 @@ ${escapedMessage}
         this.biggestAvailableAreaStoreUnsubscribe();
         this.userIsJitsiDominantSpeakerStoreUnsubscriber();
         this.jitsiParticipantsCountStoreUnsubscriber();
+        this.availabilityStatusStoreUnsubscriber();
         iframeListener.unregisterAnswerer("getState");
         iframeListener.unregisterAnswerer("loadTileset");
         iframeListener.unregisterAnswerer("getMapData");

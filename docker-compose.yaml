@@ -26,7 +26,7 @@ services:
           - 'maps.workadventure.localhost'
 
   front:
-    image: thecodingmachine/nodejs:14
+    image: thecodingmachine/nodejs:16
     environment:
       DEBUG_MODE: "$DEBUG_MODE"
       JITSI_URL: $JITSI_URL
@@ -52,6 +52,8 @@ services:
       MAX_USERNAME_LENGTH: "$MAX_USERNAME_LENGTH"
       DISABLE_ANONYMOUS: "$DISABLE_ANONYMOUS"
       OPID_LOGIN_SCREEN_PROVIDER: "$OPID_LOGIN_SCREEN_PROVIDER"
+      PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: "$PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS"
+      PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: "$PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS"
     command: yarn run start
     volumes:
       - ./front:/usr/src/app
@@ -66,7 +68,7 @@ services:
       - "traefik.http.routers.front-ssl.service=front"
 
   pusher:
-    image: thecodingmachine/nodejs:14
+    image: thecodingmachine/nodejs:16
     command: yarn dev
     environment:
       DEBUG: "socket:*"
@@ -127,7 +129,7 @@ services:
       - "traefik.http.routers.maps-ssl.service=maps"
 
   back:
-    image: thecodingmachine/nodejs:12
+    image: thecodingmachine/nodejs:16
     command: yarn dev
     #command: yarn run profile
     environment:
@@ -161,7 +163,7 @@ services:
       - "traefik.http.routers.back-ssl.service=back"
 
   uploader:
-    image: thecodingmachine/nodejs:12
+    image: thecodingmachine/nodejs:16
     command: yarn dev
     #command: yarn run profile
     environment:
@@ -180,7 +182,6 @@ services:
       - "traefik.http.routers.uploader-ssl.service=uploader"
 
   messages:
-    #image: thecodingmachine/nodejs:14
     image: thecodingmachine/workadventure-back-base:latest
     environment:
       #STARTUP_COMMAND_0: sudo apt-get install -y inotify-tools
