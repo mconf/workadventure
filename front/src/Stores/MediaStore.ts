@@ -181,12 +181,16 @@ function createVideoConstraintStore() {
 }
 
 export const inJitsiStore = writable(false);
+export const inBbbStore = writable(false);
 export const silentStore = writable(false);
+export const denyProximityMeetingStore = writable(false);
 
 export const availabilityStatusStore = derived(
-    [inJitsiStore, silentStore, privacyShutdownStore],
-    ([$inJitsiStore, $silentStore, $privacyShutdownStore]) => {
+    [inJitsiStore, inBbbStore, silentStore, privacyShutdownStore, denyProximityMeetingStore],
+    ([$inJitsiStore, $inBbbStore, $silentStore, $privacyShutdownStore, $denyProximityMeetingStore]) => {
         if ($inJitsiStore) return AvailabilityStatus.JITSI;
+        if ($inBbbStore) return AvailabilityStatus.BBB;
+        if ($denyProximityMeetingStore) return AvailabilityStatus.DENY_PROXIMITY_MEETING;
         if ($silentStore) return AvailabilityStatus.SILENT;
         if ($privacyShutdownStore) return AvailabilityStatus.AWAY;
         return AvailabilityStatus.ONLINE;
@@ -320,7 +324,10 @@ export const mediaStreamConstraintsStore = derived(
             //currentAudioConstraint = false;
         }
 
-        if ($availabilityStatusStore === AvailabilityStatus.SILENT) {
+        if (
+            $availabilityStatusStore === AvailabilityStatus.DENY_PROXIMITY_MEETING ||
+            $availabilityStatusStore === AvailabilityStatus.SILENT
+        ) {
             currentVideoConstraint = false;
             currentAudioConstraint = false;
         }
