@@ -542,28 +542,24 @@ export class RoomConnection implements RoomConnection {
         const message = SetPlayerDetailsMessageTsProto.fromPartial({
             showVoiceIndicator: show,
         });
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "setPlayerDetailsMessage",
                 setPlayerDetailsMessage: message,
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public emitPlayerStatusChange(availabilityStatus: AvailabilityStatus): void {
         const message = SetPlayerDetailsMessageTsProto.fromPartial({
             availabilityStatus,
         });
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "setPlayerDetailsMessage",
                 setPlayerDetailsMessage: message,
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public emitPlayerOutlineColor(color: number | null) {
@@ -577,14 +573,12 @@ export class RoomConnection implements RoomConnection {
                 outlineColor: color,
             });
         }
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "setPlayerDetailsMessage",
                 setPlayerDetailsMessage: message,
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public closeConnection(): void {
@@ -632,7 +626,7 @@ export class RoomConnection implements RoomConnection {
 
         const viewportMessage = this.toViewportMessage(viewport);
 
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "userMovesMessage",
                 userMovesMessage: {
@@ -640,20 +634,16 @@ export class RoomConnection implements RoomConnection {
                     viewport: viewportMessage,
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public setViewport(viewport: ViewportInterface): void {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "viewportMessage",
                 viewportMessage: this.toViewportMessage(viewport),
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     /*    public onUserJoins(callback: (message: MessageUserJoined) => void): void {
@@ -726,7 +716,7 @@ export class RoomConnection implements RoomConnection {
     }
 
     public sendWebrtcSignal(signal: unknown, receiverId: number) {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "webRtcSignalToServerMessage",
                 webRtcSignalToServerMessage: {
@@ -734,13 +724,11 @@ export class RoomConnection implements RoomConnection {
                     signal: JSON.stringify(signal),
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public sendWebrtcScreenSharingSignal(signal: unknown, receiverId: number) {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "webRtcScreenSharingSignalToServerMessage",
                 webRtcScreenSharingSignalToServerMessage: {
@@ -748,9 +736,7 @@ export class RoomConnection implements RoomConnection {
                     signal: JSON.stringify(signal),
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public onServerDisconnected(callback: () => void): void {
@@ -773,7 +759,7 @@ export class RoomConnection implements RoomConnection {
     }
 
     emitActionableEvent(itemId: number, event: string, state: unknown, parameters: unknown): void {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "itemEventMessage",
                 itemEventMessage: {
@@ -783,13 +769,11 @@ export class RoomConnection implements RoomConnection {
                     parametersJson: JSON.stringify(parameters),
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     emitSetVariableEvent(name: string, value: unknown): void {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "variableMessage",
                 variableMessage: {
@@ -797,9 +781,7 @@ export class RoomConnection implements RoomConnection {
                     value: JSON.stringify(value),
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public uploadAudio(file: FormData) {
@@ -814,7 +796,7 @@ export class RoomConnection implements RoomConnection {
     }
 
     public emitGlobalMessage(message: PlayGlobalMessageInterface): void {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "playGlobalMessage",
                 playGlobalMessage: {
@@ -823,13 +805,11 @@ export class RoomConnection implements RoomConnection {
                     broadcastToWorld: message.broadcastToWorld,
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public emitReportPlayerMessage(reportedUserUuid: string, reportComment: string): void {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "reportPlayerMessage",
                 reportPlayerMessage: {
@@ -837,13 +817,11 @@ export class RoomConnection implements RoomConnection {
                     reportComment,
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public emitQueryJitsiJwtMessage(jitsiRoom: string, tag: string | undefined): void {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "queryJitsiJwtMessage",
                 queryJitsiJwtMessage: {
@@ -852,9 +830,7 @@ export class RoomConnection implements RoomConnection {
                     // TODO: when we migrated "pusher" to ts-proto, migrate this to a StringValue
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public emitJoinBBBMeeting(meetingId: string, props: Map<string, string | number | boolean>): void {
@@ -881,16 +857,14 @@ export class RoomConnection implements RoomConnection {
     }
 
     public emitEmoteEvent(emoteName: string): void {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "emotePromptMessage",
                 emotePromptMessage: {
                     emote: emoteName,
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public emitFollowRequest(): void {
@@ -898,16 +872,14 @@ export class RoomConnection implements RoomConnection {
             return;
         }
 
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "followRequestMessage",
                 followRequestMessage: {
                     leader: this.userId,
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public emitFollowConfirmation(): void {
@@ -915,7 +887,7 @@ export class RoomConnection implements RoomConnection {
             return;
         }
 
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "followConfirmationMessage",
                 followConfirmationMessage: {
@@ -923,9 +895,7 @@ export class RoomConnection implements RoomConnection {
                     follower: this.userId,
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public emitFollowAbort(): void {
@@ -935,7 +905,7 @@ export class RoomConnection implements RoomConnection {
             return;
         }
 
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "followAbortMessage",
                 followAbortMessage: {
@@ -943,22 +913,18 @@ export class RoomConnection implements RoomConnection {
                     follower: isLeader ? 0 : this.userId,
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public emitLockGroup(lock: boolean = true): void {
-        const bytes = ClientToServerMessageTsProto.encode({
+        this.send({
             message: {
                 $case: "lockGroupPromptMessage",
                 lockGroupPromptMessage: {
                     lock,
                 },
             },
-        }).finish();
-
-        this.socket.send(bytes);
+        });
     }
 
     public getAllTags(): string[] {
@@ -974,5 +940,16 @@ export class RoomConnection implements RoomConnection {
         menuIconVisiblilityStore.set(false);
         selectCharacterSceneVisibleStore.set(true);
         gameManager.leaveGame(SelectCharacterSceneName, new SelectCharacterScene());
+    }
+
+    private send(message: ClientToServerMessageTsProto): void {
+        const bytes = ClientToServerMessageTsProto.encode(message).finish();
+
+        if (this.socket.readyState === WebSocket.CLOSING || this.socket.readyState === WebSocket.CLOSED) {
+            console.warn("Trying to send a message to the server, but the connection is closed. Message: ", message);
+            return;
+        }
+
+        this.socket.send(bytes);
     }
 }
