@@ -107,7 +107,14 @@ export class GameMapPropertiesListener {
 
                     const closable = allProps.get(GameMapProperties.OPEN_WEBSITE_CLOSABLE) as boolean | undefined;
 
-                    const coWebsite = new JitsiCoWebsite(new URL(domain), false, undefined, undefined, closable);
+                    const coWebsite = new JitsiCoWebsite(
+                        new URL(domain),
+                        false,
+                        undefined,
+                        undefined,
+                        undefined,
+                        closable
+                    );
 
                     coWebsiteManager.addCoWebsiteToStore(coWebsite, 0);
                     this.scene.initialiseJitsi(coWebsite, roomName, jwt);
@@ -268,6 +275,7 @@ export class GameMapPropertiesListener {
         let openWebsiteProperty: string | undefined;
         let allowApiProperty: boolean | undefined;
         let websitePolicyProperty: string | undefined;
+        let websiteFullscreenProperty: boolean | undefined;
         let websiteWidthProperty: number | undefined;
         let websitePositionProperty: number | undefined;
         let websiteTriggerProperty: string | undefined;
@@ -284,6 +292,9 @@ export class GameMapPropertiesListener {
                     break;
                 case GameMapProperties.OPEN_WEBSITE_POLICY:
                     websitePolicyProperty = property.value as string | undefined;
+                    break;
+                case GameMapProperties.OPEN_WEBSITE_FULLSCREEN:
+                    websiteFullscreenProperty = property.value as boolean | undefined;
                     break;
                 case GameMapProperties.OPEN_WEBSITE_WIDTH:
                     websiteWidthProperty = property.value as number | undefined;
@@ -332,6 +343,7 @@ export class GameMapPropertiesListener {
                 new URL(openWebsiteProperty ?? "", this.scene.MapUrlFile),
                 allowApiProperty,
                 websitePolicyProperty,
+                websiteFullscreenProperty,
                 websiteWidthProperty,
                 websiteClosableProperty
             );
@@ -362,6 +374,7 @@ export class GameMapPropertiesListener {
                 new URL(openWebsiteProperty ?? "", this.scene.MapUrlFile),
                 allowApiProperty,
                 websitePolicyProperty,
+                websiteFullscreenProperty,
                 websiteWidthProperty,
                 false
             );

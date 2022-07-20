@@ -12,15 +12,24 @@ export class SimpleCoWebsite implements CoWebsite {
     protected loadIframe?: CancelablePromise<HTMLIFrameElement>;
     protected allowApi?: boolean;
     protected allowPolicy?: string;
+    protected allowFullscreen?: boolean;
     protected widthPercent?: number;
     protected closable: boolean;
 
-    constructor(url: URL, allowApi?: boolean, allowPolicy?: string, widthPercent?: number, closable?: boolean) {
+    constructor(
+        url: URL,
+        allowApi?: boolean,
+        allowPolicy?: string,
+        allowFullscreen?: boolean,
+        widthPercent?: number,
+        closable?: boolean
+    ) {
         this.id = coWebsiteManager.generateUniqueId();
         this.url = url;
         this.state = writable("asleep" as CoWebsiteState);
         this.allowApi = allowApi;
         this.allowPolicy = allowPolicy;
+        this.allowFullscreen = allowFullscreen;
         this.widthPercent = widthPercent;
         this.closable = closable ?? true;
     }
@@ -68,6 +77,10 @@ export class SimpleCoWebsite implements CoWebsite {
 
             if (this.allowPolicy) {
                 this.iframe.allow = this.allowPolicy;
+            }
+
+            if (this.allowFullscreen) {
+                this.iframe.allowFullscreen = this.allowFullscreen;
             }
 
             if (this.allowApi) {

@@ -11,8 +11,9 @@ class BBBFactory {
         }
 
         const allowPolicy =
-            "microphone *; " + "camera *; " + "display-capture *; " + "clipboard-read *; " + "clipboard-write *;";
-        const coWebsite = new BBBCoWebsite(new URL(clientURL), false, allowPolicy, undefined, false);
+            "microphone *; camera *; display-capture *; clipboard-read *; clipboard-write *; screen-wake-lock *;";
+        const allowFullscreen = true;
+        const coWebsite = new BBBCoWebsite(new URL(clientURL), false, allowPolicy, allowFullscreen, undefined, false);
         coWebsiteManager.addCoWebsiteToStore(coWebsite, 0);
         coWebsiteManager.loadCoWebsite(coWebsite).catch((e) => console.error(`Error on opening co-website: ${e}`));
     }
