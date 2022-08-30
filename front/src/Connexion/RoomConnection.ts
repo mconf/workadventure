@@ -990,11 +990,13 @@ export class RoomConnection implements RoomConnection {
         props: Map<string, string | number | boolean>
     ): Promise<JoinBBBMeetingAnswer> {
         const meetingName = props.get("meetingName") as string;
+        const localMeetingId = props.get("bbbMeeting") as string;
 
         const answer = await this.query({
             $case: "joinBBBMeetingQuery",
             joinBBBMeetingQuery: {
                 meetingId,
+                localMeetingId,
                 meetingName,
             },
         });
