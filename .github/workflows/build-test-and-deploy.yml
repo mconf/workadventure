@@ -39,7 +39,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: thecodingmachine/workadventure-front
+          images: mconf/workadventure-front
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -48,8 +48,8 @@ jobs:
           file: front/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: thecodingmachine/workadventure-front:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          cache-from: type=registry,ref=thecodingmachine/workadventure-front:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: mconf/workadventure-front:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          cache-from: type=registry,ref=mconf/workadventure-front:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -79,7 +79,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: thecodingmachine/workadventure-chat
+          images: mconf/workadventure-chat
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -88,8 +88,8 @@ jobs:
           file: front/chat/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: thecodingmachine/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          cache-from: type=registry,ref=thecodingmachine/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: mconf/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          cache-from: type=registry,ref=mconf/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -119,7 +119,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: thecodingmachine/workadventure-back
+          images: mconf/workadventure-back
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -128,8 +128,8 @@ jobs:
           file: back/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: thecodingmachine/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          cache-from: type=registry,ref=thecodingmachine/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: mconf/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          cache-from: type=registry,ref=mconf/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -159,7 +159,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: thecodingmachine/workadventure-pusher
+          images: mconf/workadventure-pusher
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -168,8 +168,8 @@ jobs:
           file: pusher/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: thecodingmachine/workadventure-pusher:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          cache-from: type=registry,ref=thecodingmachine/workadventure-pusher:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: mconf/workadventure-pusher:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          cache-from: type=registry,ref=mconf/workadventure-pusher:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -195,15 +195,15 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: thecodingmachine/workadventure-uploader
+          images: mconf/workadventure-uploader
 
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           file: uploader/Dockerfile
           push: true
-          tags: thecodingmachine/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          cache-from: type=registry,ref=thecodingmachine/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: mconf/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          cache-from: type=registry,ref=mconf/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -232,7 +232,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: thecodingmachine/workadventure-maps
+          images: mconf/workadventure-maps
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -240,8 +240,8 @@ jobs:
           context: maps/
           file: maps/Dockerfile
           push: true
-          tags: thecodingmachine/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          cache-from: type=registry,ref=thecodingmachine/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: mconf/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          cache-from: type=registry,ref=mconf/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -271,7 +271,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: thecodingmachine/workadventure-map-storage
+          images: mconf/workadventure-map-storage
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -280,8 +280,8 @@ jobs:
           file: map-storage/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: thecodingmachine/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          cache-from: type=registry,ref=thecodingmachine/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: mconf/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          cache-from: type=registry,ref=mconf/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -311,7 +311,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: thecodingmachine/workadventure-simple-ecs
+          images: mconf/workadventure-simple-ecs
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -319,8 +319,8 @@ jobs:
           context: xmpp/
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: thecodingmachine/workadventure-simple-ecs:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          cache-from: type=registry,ref=thecodingmachine/workadventure-simple-ecs:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: mconf/workadventure-simple-ecs:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          cache-from: type=registry,ref=mconf/workadventure-simple-ecs:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -431,82 +431,3 @@ jobs:
           path: tests/playwright-report/
           retention-days: 30
 
-  deeploy:
-    needs:
-      - build-front
-      - build-chat
-      - build-back
-      - build-pusher
-      - build-maps
-      - build-uploader
-      - build-map-storage
-      - build-ejabberd
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy') }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      # Create a slugified value of the branch
-      - uses: rlespinasse/github-slug-action@3.1.0
-
-      - name: Set ADMIN_URL if "deploy-connect-to-admin" label is set
-        run: echo "ADMIN_API_URL=https://${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}.test.workadventu.re" >> $GITHUB_ENV
-        if: ${{ (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-connect-to-admin')) || env.GITHUB_REF_SLUG == 'develop'  }}
-
-      - name: Write certificate
-        run: echo "${CERTS_PRIVATE_KEY}" > secret.key && chmod 0600 secret.key
-        env:
-          CERTS_PRIVATE_KEY: ${{ secrets.CERTS_PRIVATE_KEY }}
-
-      - name: Download certificate
-        run: mkdir secrets && scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i secret.key ubuntu@cert.workadventu.re:./config/live/workadventu.re/* secrets/
-
-      - name: Create namespace
-        uses: steebchen/kubectl@v1.0.0
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_FILE_BASE64 }}
-        with:
-          args: create namespace workadventure-${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-        continue-on-error: true
-
-      - name: Delete old certificates in namespace
-        uses: steebchen/kubectl@v1.0.0
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_FILE_BASE64 }}
-        with:
-          args: -n workadventure-${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }} delete secret certificate-tls
-        continue-on-error: true
-
-      - name: Install certificates in namespace
-        uses: steebchen/kubectl@v1.0.0
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_FILE_BASE64 }}
-        with:
-          args: -n workadventure-${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }} create secret tls certificate-tls --key="secrets/privkey.pem" --cert="secrets/fullchain.pem"
-
-      - name: Deploy
-        uses: thecodingmachine/deeployer-action@master
-        env:
-          KUBE_CONFIG_FILE: ${{ secrets.KUBE_CONFIG_FILE }}
-          ADMIN_API_TOKEN: ${{ secrets.ADMIN_API_TOKEN }}
-          ADMIN_SOCKETS_TOKEN: ${{ secrets.ADMIN_SOCKETS_TOKEN }}
-          JITSI_ISS: ${{ secrets.JITSI_ISS }}
-          JITSI_URL: ${{ secrets.JITSI_URL }}
-          SECRET_JITSI_KEY: ${{ secrets.SECRET_JITSI_KEY }}
-          TURN_STATIC_AUTH_SECRET: ${{ secrets.TURN_STATIC_AUTH_SECRET }}
-          DEPLOY_REF: ${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
-          POSTHOG_URL: ${{ secrets.POSTHOG_URL }}
-          EJABBERD_JWT_SECRET: ${{ secrets.EJABBERD_JWT_SECRET }}
-        with:
-          namespace: workadventure-${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-
-      - name: Add a comment in PR
-        uses: unsplash/comment-on-pr@master
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          msg: "Environment deployed at https://play-${{ env.GITHUB_HEAD_REF_SLUG }}.test.workadventu.re \nTests available at https://maps-${{ env.GITHUB_HEAD_REF_SLUG }}.test.workadventu.re/tests"
