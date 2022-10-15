@@ -30,6 +30,10 @@ export const OPID_PROFILE_SCREEN_PROVIDER =
     getEnvConfig("OPID_PROFILE_SCREEN_PROVIDER") || (ADMIN_URL ? ADMIN_URL + "/profile" : undefined);
 const FALLBACK_LOCALE = getEnvConfig("FALLBACK_LOCALE") || undefined;
 export const CHAT_URL = getEnvConfig("CHAT_URL") || "//chat.workadventure.localhost";
+const PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS = parseInt(getEnvConfig("PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS") || "0");
+const PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS = parseInt(
+    getEnvConfig("PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS") || "0"
+);
 
 export {
     DEBUG_MODE,
@@ -48,4 +52,6 @@ export {
     JITSI_PRIVATE_MODE,
     ENABLE_FEATURE_MAP_EDITOR,
     FALLBACK_LOCALE,
+    PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS,
+    PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS,
 };

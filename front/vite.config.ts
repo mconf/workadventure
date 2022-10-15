@@ -47,6 +47,8 @@ export default defineConfig({
                 "OPID_PROFILE_SCREEN_PROVIDER",
                 "FALLBACK_LOCALE",
                 "CHAT_URL",
+                "PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS",
+                "PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS",
             ],
         }),
         pluginRewriteAll(),
