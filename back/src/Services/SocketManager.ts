@@ -48,6 +48,8 @@ import {
     MoveToPositionMessage,
     SubToPusherRoomMessage,
     EditMapCommandWithKeyMessage,
+    EditMapCommandMessage,
+    ChatMessagePrompt,
 } from "../Messages/generated/messages_pb";
 import { User, UserSocket } from "../Model/User";
 import { ProtobufUtils } from "../Model/Websocket/ProtobufUtils";
@@ -112,6 +114,7 @@ export class SocketManager {
             };
         }
         const roomJoinedMessage = new RoomJoinedMessage();
+        roomJoinedMessage.setUserjid(joinRoomMessage.getUserjid());
         roomJoinedMessage.setTagList(joinRoomMessage.getTagList());
         roomJoinedMessage.setUserroomtoken(joinRoomMessage.getUserroomtoken());
         roomJoinedMessage.setCharacterlayerList(joinRoomMessage.getCharacterlayerList());
@@ -362,6 +365,7 @@ export class SocketManager {
             throw new Error(`clientUser.userId is not an integer ${user.id}`);
         }
         userJoinedZoneMessage.setUserid(user.id);
+        userJoinedZoneMessage.setUserjid(user.userJid);
         userJoinedZoneMessage.setUseruuid(user.uuid);
         userJoinedZoneMessage.setName(user.name);
         userJoinedZoneMessage.setAvailabilitystatus(user.getAvailabilityStatus());
@@ -1083,16 +1087,18 @@ export class SocketManager {
     }
 
     handleEditMapCommandWithKeyMessage(room: GameRoom, user: User, message: EditMapCommandWithKeyMessage) {
-        getMapStorageClient().handleEditMapCommandWithKeyMessage(message, (err, editMapMessage) => {
-            if (err) {
-                emitError(user.socket, err);
-                throw err;
+        getMapStorageClient().handleEditMapCommandWithKeyMessage(
+            message,
+            (err: unknown, editMapMessage: EditMapCommandMessage) => {
+                if (err) {
+                    emitError(user.socket, err);
+                    throw err;
+                }
+                const subMessage = new SubToPusherRoomMessage();
+                subMessage.setEditmapcommandmessage(editMapMessage);
+                room.dispatchRoomMessage(subMessage);
             }
-            const subMessage = new SubToPusherRoomMessage();
-            subMessage.setEditmapcommandmessage(editMapMessage);
-
-            room.dispatchRoomMessage(subMessage);
-        });
+        );
     }
 
     getAllRooms(): RoomsList {
@@ -1127,6 +1133,24 @@ export class SocketManager {
                 // TODO delete room;
             }
         }
+    }
+
+    async dispatchChatMessagePrompt(chatMessagePrompt: ChatMessagePrompt): Promise<boolean> {
+        const room = await this.roomsPromises.get(chatMessagePrompt.getRoomid());
+        console.log(chatMessagePrompt.getRoomid());
+        if (!room) {
+            return false;
+        }
+
+        const subMessage = new SubToPusherRoomMessage();
+        if (chatMessagePrompt.hasJoinmucroommessage()) {
+            subMessage.setJoinmucroommessage(chatMessagePrompt.getJoinmucroommessage());
+        } else if (chatMessagePrompt.hasLeavemucroommessage()) {
+            subMessage.setLeavemucroommessage(chatMessagePrompt.getLeavemucroommessage());
+        }
+        room.sendSubMessageToRoom(subMessage);
+
+        return true;
     }
 }
 

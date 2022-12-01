@@ -10,7 +10,7 @@ import type CancelablePromise from "cancelable-promise";
 import LL from "../../../i18n/i18n-svelte";
 import { blackListManager } from "../../WebRtc/BlackListManager";
 import { showReportScreenStore } from "../../Stores/ShowReportScreenStore";
-import type { PositionMessage, PositionMessage_Direction } from "../../../messages/ts-proto-generated/protos/messages";
+import type { PositionMessage, PositionMessage_Direction } from "@workadventure/messages";
 
 export enum RemotePlayerEvent {
     Clicked = "Clicked",
@@ -132,7 +132,7 @@ export class RemotePlayer extends Character implements ActivatableInterface {
             priority: -1,
             style: "is-error",
             callback: () => {
-                showReportScreenStore.set({ userId: this.userId, userName: this.name });
+                showReportScreenStore.set({ userId: this.userId, userName: this.playerName });
                 actionsMenuStore.clear();
             },
         });

@@ -1,3 +1,5 @@
+import type { OpidWokaNamePolicy } from "@workadventure/messages";
+
 export interface FrontConfigurationInterface {
     DEBUG_MODE: boolean;
     PUSHER_URL: string;
@@ -26,6 +28,7 @@ export interface FrontConfigurationInterface {
     CHAT_URL: string | undefined;
     ENABLE_CHAT_UPLOAD: boolean;
     FALLBACK_LOCALE: string | undefined;
+    OPID_WOKA_NAME_POLICY: OpidWokaNamePolicy | undefined;
     PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: number;
     PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: number;
 }

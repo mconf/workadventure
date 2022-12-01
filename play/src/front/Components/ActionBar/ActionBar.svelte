@@ -44,7 +44,6 @@
         inviteUserActivated,
         SubMenusInterface,
         subMenusStore,
-        userIsConnected,
     } from "../../Stores/MenuStore";
     import type { Emoji } from "../../Stores/EmoteStore";
     import {
@@ -58,7 +57,6 @@
     import LL from "../../../i18n/i18n-svelte";
     import { bottomActionBarVisibilityStore } from "../../Stores/BottomActionBarStore";
     import { fly } from "svelte/transition";
-    import { ENABLE_OPENID } from "../../Enum/EnvironmentVariable";
     import { isMediaBreakpointUp } from "../../Utils/BreakpointsUtils";
     import { inExternalServiceStore, myCameraStore, myMicrophoneStore } from "../../Stores/MyMediaStore";
     import { mapEditorModeStore } from "../../Stores/MapEditorStore";
@@ -71,10 +69,9 @@
     import Tooltip from "../Util/Tooltip.svelte";
     import {
         modalIframeAllowApi,
-        modalIframeAllowlStore,
+        modalIframeAllowStore,
         modalIframeSrcStore,
-        modalIframeTitlelStore,
-        //modalPositionStore,
+        modalIframeTitleStore,
         modalVisibilityStore,
     } from "../../Stores/ModalStore";
     import { userHasAccessToBackOfficeStore } from "../../Stores/GameStore";
@@ -281,24 +278,24 @@
         window.open(`https://workadventu.re/admin`, "_blanck");
     }
 
-    function register() {
-        /*modalIframeTitlelStore.set($LL.menu.icon.open.register());
-        modalIframeAllowlStore.set("fullscreen");
-        modalIframeSrcStore.set(`https://workadventu.re/funnel/connection?roomUrl=${window.location.toString()}`);
-        modalPositionStore.set("center");
-        modalIframeAllowApi.set(true);
-        modalVisibilityStore.set(true);
+    /*function register() {
+        //modalIframeTitleStore.set($LL.menu.icon.open.register());
+        ///modalIframeAllowStore.set("fullscreen");
+        //modalIframeSrcStore.set(`https://workadventu.re/funnel/connection?roomUrl=${window.location.toString()}`);
+        //modalPositionStore.set("center");
+        //modalIframeAllowApi.set(true);
+        //modalVisibilityStore.set(true);
 
-        resetMenuVisibility();
-        resetChatVisibility();*/
+        //resetMenuVisibility();
+        //resetChatVisibility();
 
         window.open("https://workadventu.re/getting-started", "_blank");
-    }
+    }*/
 
     function resetModalVisibility() {
         modalVisibilityStore.set(false);
-        modalIframeTitlelStore.set(null);
-        modalIframeAllowlStore.set(null);
+        modalIframeTitleStore.set(null);
+        modalIframeAllowStore.set(null);
         modalIframeSrcStore.set(null);
         modalIframeAllowApi.set(false);
     }
@@ -698,7 +695,9 @@
                 </div>
             {/if}
 
-            {#if ENABLE_OPENID && !$userIsConnected}
+            <!-- TODO button must displayed by scripting API -->
+            <!--
+            {#if ENABLE_OPENID && !$userIsConnected && }
                 <div
                     class="bottom-action-section tw-flex tw-flex-initial"
                     in:fly={{}}
@@ -715,6 +714,7 @@
                     </button>
                 </div>
             {/if}
+            -->
         </div>
     </div>
 </div>

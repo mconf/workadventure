@@ -16,7 +16,7 @@ import { iframeListener } from "../../Api/IframeListener";
 import { Room } from "../../Connexion/Room";
 import LL from "../../../i18n/i18n-svelte";
 import { inJitsiStore, inBbbStore, silentStore, inOpenWebsite } from "../../Stores/MediaStore";
-import type { ITiledMapProperty } from "@workadventure/tiled-map-type-guard";
+import type { ITiledMapLayer, ITiledMapObject } from "@workadventure/tiled-map-type-guard";
 import { urlManager } from "../../Url/UrlManager";
 import { chatZoneLiveStore } from "../../Stores/ChatStore";
 import type { GameMapFrontWrapper } from "./GameMap/GameMapFrontWrapper";
@@ -28,21 +28,11 @@ interface OpenCoWebsite {
     coWebsite?: CoWebsite;
 }
 
-/**
- * Either Layer or Object within Objects Layer in Tiled
- */
-export interface ITiledPlace {
-    name: string;
-    properties?: ITiledMapProperty[];
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-}
+export type ITiledPlace = ITiledMapLayer | ITiledMapObject;
 
 export class GameMapPropertiesListener {
-    private coWebsitesOpenByPlace = new Map<ITiledPlace, OpenCoWebsite>();
-    private coWebsitesActionTriggerByPlace = new Map<ITiledPlace, string>();
+    private coWebsitesOpenByPlace = new Map<string, OpenCoWebsite>();
+    private coWebsitesActionTriggerByPlace = new Map<string, string>();
 
     constructor(private scene: GameScene, private gameMapFrontWrapper: GameMapFrontWrapper) {}
 
@@ -272,11 +262,11 @@ export class GameMapPropertiesListener {
         });
 
         this.gameMapFrontWrapper.onEnterArea((newAreas) => {
-            this.onEnterPlaceHandler(newAreas);
+            this.onEnterPlaceHandler(newAreas.map((area) => this.gameMapFrontWrapper.mapAreaToTiledObject(area)));
         });
 
         this.gameMapFrontWrapper.onLeaveArea((oldAreas) => {
-            this.onLeavePlaceHandler(oldAreas);
+            this.onLeavePlaceHandler(oldAreas.map((area) => this.gameMapFrontWrapper.mapAreaToTiledObject(area)));
         });
     }
 
@@ -346,7 +336,7 @@ export class GameMapPropertiesListener {
 
         const actionId = "openWebsite-" + (Math.random() + 1).toString(36).substring(7);
 
-        if (this.coWebsitesOpenByPlace.has(place)) {
+        if (this.coWebsitesOpenByPlace.has(this.getIdFromPlace(place))) {
             return;
         }
 
@@ -354,7 +344,7 @@ export class GameMapPropertiesListener {
             actionId: actionId,
         };
 
-        this.coWebsitesOpenByPlace.set(place, coWebsiteOpen);
+        this.coWebsitesOpenByPlace.set(this.getIdFromPlace(place), coWebsiteOpen);
 
         const loadCoWebsiteFunction = (coWebsite: CoWebsite) => {
             coWebsiteManager.loadCoWebsite(coWebsite).catch(() => {
@@ -388,7 +378,7 @@ export class GameMapPropertiesListener {
                 websiteTriggerMessageProperty = get(LL).trigger.cowebsite();
             }
 
-            this.coWebsitesActionTriggerByPlace.set(place, actionId);
+            this.coWebsitesActionTriggerByPlace.set(this.getIdFromPlace(place), actionId);
 
             layoutManagerActionStore.addAction({
                 uuid: actionId,
@@ -427,7 +417,9 @@ export class GameMapPropertiesListener {
         }
         const focusable = place.properties.find((property) => property.name === GameMapProperties.FOCUSABLE);
         if (focusable && focusable.value === true) {
-            const zoomMargin = place.properties.find((property) => property.name === GameMapProperties.ZOOM_MARGIN);
+            const zoomMargin = place.properties.find((property) =>
+                [GameMapProperties.ZOOM_MARGIN, "zoom_margin"].includes(property.name)
+            );
             this.scene.getCameraManager().enterFocusMode(
                 {
                     x: place.x + place.width * 0.5,
@@ -463,7 +455,7 @@ export class GameMapPropertiesListener {
             return;
         }
 
-        const coWebsiteOpen = this.coWebsitesOpenByPlace.get(place);
+        const coWebsiteOpen = this.coWebsitesOpenByPlace.get(this.getIdFromPlace(place));
 
         if (!coWebsiteOpen) {
             return;
@@ -475,7 +467,7 @@ export class GameMapPropertiesListener {
             coWebsiteManager.closeCoWebsite(coWebsite);
         }
 
-        this.coWebsitesOpenByPlace.delete(place);
+        this.coWebsitesOpenByPlace.delete(this.getIdFromPlace(place));
 
         inOpenWebsite.set(false);
 
@@ -484,7 +476,7 @@ export class GameMapPropertiesListener {
         }
 
         const actionStore = get(layoutManagerActionStore);
-        const actionTriggerUuid = this.coWebsitesActionTriggerByPlace.get(place);
+        const actionTriggerUuid = this.coWebsitesActionTriggerByPlace.get(this.getIdFromPlace(place));
 
         if (!actionTriggerUuid) {
             return;
@@ -499,7 +491,7 @@ export class GameMapPropertiesListener {
             layoutManagerActionStore.removeAction(actionTriggerUuid);
         }
 
-        this.coWebsitesActionTriggerByPlace.delete(place);
+        this.coWebsitesActionTriggerByPlace.delete(this.getIdFromPlace(place));
     }
 
     private handleFocusablePropertiesOnLeave(place: ITiledPlace): void {
@@ -510,5 +502,9 @@ export class GameMapPropertiesListener {
         if (focusable && focusable.value === true) {
             this.scene.getCameraManager().leaveFocusMode(this.scene.CurrentPlayer, 1000);
         }
+    }
+
+    private getIdFromPlace(place: ITiledPlace): string {
+        return `${place.name}:${place.type ?? ""}:${place.id ?? 0}`;
     }
 }

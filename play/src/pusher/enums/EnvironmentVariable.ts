@@ -1,3 +1,4 @@
+import { OpidWokaNamePolicy } from "@workadventure/messages";
 import { z, ZodError } from "zod";
 import type { FrontConfigurationInterface } from "../../common/FrontConfigurationInterface";
 
@@ -34,12 +35,11 @@ const EnvironmentVariables = z.object({
     OPID_USERNAME_CLAIM: z.string().optional(),
     OPID_LOCALE_CLAIM: z.string().optional(),
     OPID_LOGOUT_REDIRECT_URL: z.string().optional(),
+    USERNAME_POLICY: z.string().optional(),
     DISABLE_ANONYMOUS: BoolAsString.optional(),
     PROMETHEUS_AUTHORIZATION_TOKEN: z.string().optional(),
     EJABBERD_DOMAIN: z.string().optional(),
-    EJABBERD_WS_URI: z.string().optional(),
     EJABBERD_JWT_SECRET: z.string().optional(),
-    MAX_HISTORY_CHAT: PositiveIntAsString.optional(),
     ENABLE_CHAT: BoolAsString.optional(),
     ENABLE_CHAT_UPLOAD: BoolAsString.optional(),
     DEBUG_ERROR_MESSAGES: BoolAsString.optional(),
@@ -67,6 +67,7 @@ const EnvironmentVariables = z.object({
     POSTHOG_URL: z.string().url().optional().or(z.literal("")),
     FALLBACK_LOCALE: z.string().optional(),
     CHAT_URL: z.string().url(),
+    OPID_WOKA_NAME_POLICY: OpidWokaNamePolicy.optional(),
     PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: PositiveIntAsString.optional(),
     PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: PositiveIntAsString.optional(),
 });
@@ -105,6 +106,7 @@ function toBool(value: BoolAsString | undefined, defaultValue: boolean): boolean
 export const SECRET_KEY = env.SECRET_KEY;
 export const API_URL = env.API_URL;
 export const ADMIN_API_URL = env.ADMIN_API_URL;
+export const ADMIN_API_RETRY_DELAY = parseInt(process.env.ADMIN_API_RETRY_DELAY || "500");
 export const ADMIN_URL = env.ADMIN_URL;
 export const ADMIN_API_TOKEN = env.ADMIN_API_TOKEN;
 export const ADMIN_SOCKETS_TOKEN = env.ADMIN_SOCKETS_TOKEN;
@@ -128,12 +130,11 @@ export const OPID_SCOPE = env.OPID_SCOPE || "openid email";
 export const OPID_PROMPT = env.OPID_PROMPT || "login";
 export const OPID_USERNAME_CLAIM = env.OPID_USERNAME_CLAIM || "username";
 export const OPID_LOCALE_CLAIM = env.OPID_LOCALE_CLAIM || "locale";
+export const OPID_WOKA_NAME_POLICY = env.OPID_WOKA_NAME_POLICY || "user_input";
 export const DISABLE_ANONYMOUS: boolean = toBool(env.DISABLE_ANONYMOUS, false);
 export const PROMETHEUS_AUTHORIZATION_TOKEN = env.PROMETHEUS_AUTHORIZATION_TOKEN;
 export const EJABBERD_DOMAIN: string = env.EJABBERD_DOMAIN || "";
-export const EJABBERD_WS_URI: string = env.EJABBERD_WS_URI || "";
 export const EJABBERD_JWT_SECRET: string = env.EJABBERD_JWT_SECRET || "";
-export const MAX_HISTORY_CHAT: number = toNumber(env.MAX_HISTORY_CHAT, 0);
 export const ENABLE_CHAT: boolean = toBool(env.ENABLE_CHAT, true);
 export const ENABLE_CHAT_UPLOAD: boolean = toBool(env.ENABLE_CHAT_UPLOAD, true);
 export const DEBUG_ERROR_MESSAGES = toBool(env.DEBUG_ERROR_MESSAGES, false);
@@ -174,6 +175,7 @@ export const FRONT_ENVIRONMENT_VARIABLES: FrontConfigurationInterface = {
     CHAT_URL: env.CHAT_URL,
     ENABLE_CHAT_UPLOAD: toBool(env.ENABLE_CHAT_UPLOAD, true),
     FALLBACK_LOCALE: env.FALLBACK_LOCALE,
+    OPID_WOKA_NAME_POLICY: env.OPID_WOKA_NAME_POLICY,
     PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: toNumber(env.PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS, 0),
     PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: toNumber(env.PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS, 0),
 };

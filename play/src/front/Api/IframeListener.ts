@@ -37,7 +37,7 @@ import type { HasPlayerMovedInterface } from "./Events/HasPlayerMovedInterface";
 import type { JoinProximityMeetingEvent } from "./Events/ProximityMeeting/JoinProximityMeetingEvent";
 import type { ParticipantProximityMeetingEvent } from "./Events/ProximityMeeting/ParticipantProximityMeetingEvent";
 import type { MessageUserJoined } from "../Connexion/ConnexionModels";
-import { availabilityStatusToJSON } from "../../messages/ts-proto-generated/protos/messages";
+import { availabilityStatusToJSON } from "@workadventure/messages";
 import type { AddPlayerEvent } from "./Events/AddPlayerEvent";
 import { localUserStore } from "../Connexion/LocalUserStore";
 import { mediaManager, NotificationType } from "../WebRtc/MediaManager";
@@ -46,13 +46,14 @@ import type { ChatMessage } from "./Events/ChatEvent";
 import { requestVisitCardsStore } from "../Stores/GameStore";
 import {
     modalIframeAllowApi,
-    modalIframeAllowlStore,
+    modalIframeAllowStore,
     modalIframeSrcStore,
-    modalIframeTitlelStore,
+    modalIframeTitleStore,
     modalPositionStore,
     modalVisibilityStore,
 } from "../Stores/ModalStore";
 import { connectionManager } from "../Connexion/ConnectionManager";
+import { gameManager } from "../Phaser/Game/GameManager";
 
 type AnswererCallback<T extends keyof IframeQueryMap> = (
     query: IframeQueryMap[T]["query"],
@@ -304,7 +305,6 @@ class IframeListener {
                     }
 
                     const iframeEvent = iframeEventGuarded.data;
-                    console.info("iframeEvent.type", iframeEvent.type);
                     if (iframeEvent.type === "showLayer") {
                         this._showLayerStream.next(iframeEvent.data);
                     } else if (iframeEvent.type === "hideLayer") {
@@ -430,8 +430,8 @@ class IframeListener {
                     } else if (iframeEvent.type == "showBusinessCard") {
                         requestVisitCardsStore.set(iframeEvent.data.visitCardUrl);
                     } else if (iframeEvent.type == "openModal") {
-                        modalIframeTitlelStore.set(iframeEvent.data.tiltle);
-                        modalIframeAllowlStore.set(iframeEvent.data.allow);
+                        modalIframeTitleStore.set(iframeEvent.data.title);
+                        modalIframeAllowStore.set(iframeEvent.data.allow);
                         modalIframeSrcStore.set(iframeEvent.data.src);
                         modalPositionStore.set(iframeEvent.data.position);
                         modalIframeAllowApi.set(iframeEvent.data.allowApi);
@@ -801,6 +801,13 @@ class IframeListener {
         if (!connectionManager.currentRoom) {
             throw new Error("Race condition : Current room is not defined yet");
         }
+        const xmppSettingsMessage = gameManager.getCurrentGameScene().connection?.xmppSettingsMessage;
+        if (xmppSettingsMessage) {
+            this.postMessageToChat({
+                type: "xmppSettingsMessage",
+                data: xmppSettingsMessage,
+            });
+        }
         this.postMessageToChat({
             type: "settings",
             data: {
@@ -808,6 +815,7 @@ class IframeListener {
                 chatSounds: localUserStore.getChatSounds(),
                 enableChat: connectionManager.currentRoom?.enableChat,
                 enableChatUpload: connectionManager.currentRoom?.enableChatUpload,
+                enableChatDisconnectedList: connectionManager.currentRoom?.enableChatDisconnectedList,
             },
         });
     }
@@ -853,7 +861,7 @@ class IframeListener {
     // << TODO delete with chat XMPP integration for the discussion circle
     sendWritingStatusToChatIframe(list: Set<PlayerInterface>) {
         const usersTyping: Array<string> = [];
-        list.forEach((user) => usersTyping.push(user.userUuid));
+        list.forEach((user) => usersTyping.push(user.userJid));
         this.postMessageToChat({
             type: "updateWritingStatusChatList",
             data: usersTyping,
@@ -889,7 +897,7 @@ class IframeListener {
             this.chatIframe = document.getElementById("chatWorkAdventure") as HTMLIFrameElement | null;
         }
         try {
-            if (!this.chatIframe) {
+            if (!this.chatIframe || !this.chatIframe.contentWindow || !this.chatIframe.contentWindow.postMessage) {
                 throw new Error("No chat iFrame registered");
             } else {
                 this.chatIframe.contentWindow?.postMessage(message, this.chatIframe?.src);

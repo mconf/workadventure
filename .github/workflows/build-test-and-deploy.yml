@@ -388,7 +388,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: mconf/workadventure-simple-ecs
+          images: mconf/workadventure-ejabberd
 
       - name: Build and push
         uses: docker/build-push-action@v3

@@ -1,7 +1,7 @@
 import type { SignalData } from "simple-peer";
 import type { RoomConnection } from "./RoomConnection";
 import type { BodyResourceDescriptionInterface } from "../Phaser/Entity/PlayerTextures";
-import type { AvailabilityStatus, PositionMessage } from "../../messages/ts-proto-generated/protos/messages";
+import type { AvailabilityStatus, PositionMessage } from "@workadventure/messages";
 
 export interface MessageUserMovedInterface {
     userId: number;
@@ -10,6 +10,7 @@ export interface MessageUserMovedInterface {
 
 export interface MessageUserJoined {
     userId: number;
+    userJid: string;
     name: string;
     characterLayers: BodyResourceDescriptionInterface[];
     position: PositionMessage;
