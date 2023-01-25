@@ -29,4 +29,6 @@ export interface FrontConfigurationInterface {
     ENABLE_CHAT_UPLOAD: boolean;
     FALLBACK_LOCALE: string | undefined;
     OPID_WOKA_NAME_POLICY: OpidWokaNamePolicy | undefined;
+    PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: number;
+    PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: number;
 }

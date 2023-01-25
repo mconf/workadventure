@@ -36,6 +36,8 @@ export const CHAT_URL = env.CHAT_URL;
 export const ENABLE_CHAT_UPLOAD = env.ENABLE_CHAT_UPLOAD;
 export const FALLBACK_LOCALE = env.FALLBACK_LOCALE;
 export const OPID_WOKA_NAME_POLICY = env.OPID_WOKA_NAME_POLICY;
+export const PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS = env.PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS;
+export const PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS = env.PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS;
 
 export const POSITION_DELAY = 200; // Wait 200ms between sending position events
 export const MAX_EXTRAPOLATION_TIME = 100; // Extrapolate a maximum of 250ms if no new movement is sent by the player
