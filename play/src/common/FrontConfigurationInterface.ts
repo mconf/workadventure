@@ -32,4 +32,6 @@ export interface FrontConfigurationInterface {
     OPID_WOKA_NAME_POLICY: OpidWokaNamePolicy | undefined;
     ENABLE_REPORT_ISSUES_MENU: boolean | undefined;
     REPORT_ISSUES_URL: string | undefined;
+    PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: number;
+    PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: number;
 }

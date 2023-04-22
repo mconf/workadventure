@@ -103,6 +103,8 @@ services:
             REPORT_ISSUES_URL: $REPORT_ISSUES_URL
             # LogRocket
             LOGROCKET_ID: $LOGROCKET_ID
+            PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: "$PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS"
+            PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: "$PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS"
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.front.rule=Host(`front.workadventure.localhost`)"

@@ -76,6 +76,8 @@ const EnvironmentVariables = z.object({
     ENABLE_REPORT_ISSUES_MENU: BoolAsString.optional(),
     REPORT_ISSUES_URL: z.string().url().optional().or(z.literal("")),
     LOGROCKET_ID: z.string().optional(),
+    PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: PositiveIntAsString.optional(),
+    PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: PositiveIntAsString.optional(),
 });
 
 type EnvironmentVariables = z.infer<typeof EnvironmentVariables>;
@@ -202,4 +204,6 @@ export const FRONT_ENVIRONMENT_VARIABLES: FrontConfigurationInterface = {
     OPID_WOKA_NAME_POLICY,
     ENABLE_REPORT_ISSUES_MENU: toBool(env.ENABLE_REPORT_ISSUES_MENU, false),
     REPORT_ISSUES_URL: env.REPORT_ISSUES_URL,
+    PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: toNumber(env.PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS, 0),
+    PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: toNumber(env.PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS, 0),
 };
