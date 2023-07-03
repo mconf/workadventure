@@ -30,7 +30,7 @@ jobs:
       - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          registry: ${{ CONTAINER_REGISTRY }}
+          registry: ${{ vars.CONTAINER_REGISTRY }}
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
 
@@ -40,7 +40,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play
+          images: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -50,10 +50,10 @@ jobs:
           file: play/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play:develop
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -74,7 +74,7 @@ jobs:
       - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          registry: ${{ CONTAINER_REGISTRY }}
+          registry: ${{ vars.CONTAINER_REGISTRY }}
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
 
@@ -84,7 +84,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat
+          images: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -94,10 +94,10 @@ jobs:
           file: chat/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat:develop
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -118,7 +118,7 @@ jobs:
       - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          registry: ${{ CONTAINER_REGISTRY }}
+          registry: ${{ vars.CONTAINER_REGISTRY }}
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
 
@@ -128,7 +128,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back
+          images: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back
 
       - name: Replace version string
         run: |
@@ -144,10 +144,10 @@ jobs:
           file: back/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back:develop
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -164,7 +164,7 @@ jobs:
       - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          registry: ${{ CONTAINER_REGISTRY }}
+          registry: ${{ vars.CONTAINER_REGISTRY }}
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
 
@@ -174,7 +174,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader
+          images: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -182,10 +182,10 @@ jobs:
         with:
           file: uploader/Dockerfile
           push: true
-          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader:develop
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -205,7 +205,7 @@ jobs:
       - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          registry: ${{ CONTAINER_REGISTRY }}
+          registry: ${{ vars.CONTAINER_REGISTRY }}
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
 
@@ -215,7 +215,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps
+          images: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -224,10 +224,10 @@ jobs:
           context: maps/
           file: maps/Dockerfile
           push: true
-          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps:develop
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -248,7 +248,7 @@ jobs:
       - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          registry: ${{ CONTAINER_REGISTRY }}
+          registry: ${{ vars.CONTAINER_REGISTRY }}
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
 
@@ -258,7 +258,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage
+          images: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -268,10 +268,10 @@ jobs:
           file: map-storage/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage:develop
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -292,7 +292,7 @@ jobs:
       - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          registry: ${{ CONTAINER_REGISTRY }}
+          registry: ${{ vars.CONTAINER_REGISTRY }}
           username: ${{ secrets.OCI_USERNAME }}
           password: ${{ secrets.OCI_TOKEN }}
 
@@ -302,7 +302,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd
+          images: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -311,9 +311,9 @@ jobs:
           context: xmpp/
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd:develop
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ vars.CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
