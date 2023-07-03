@@ -27,11 +27,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ${{ CONTAINER_REGISTRY }}
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_TOKEN }}
 
       - uses: rlespinasse/github-slug-action@3.1.0
 
@@ -39,7 +40,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: mconf/workadventure-play
+          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -49,10 +50,10 @@ jobs:
           file: play/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: mconf/workadventure-play:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=mconf/workadventure-play:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=mconf/workadventure-play:develop
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-play:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -70,11 +71,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ${{ CONTAINER_REGISTRY }}
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_TOKEN }}
 
       - uses: rlespinasse/github-slug-action@3.1.0
 
@@ -82,7 +84,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: mconf/workadventure-chat
+          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -92,10 +94,10 @@ jobs:
           file: chat/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: mconf/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=mconf/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=mconf/workadventure-chat:develop
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-chat:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -113,11 +115,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ${{ CONTAINER_REGISTRY }}
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_TOKEN }}
 
       - uses: rlespinasse/github-slug-action@3.1.0
 
@@ -125,7 +128,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: mconf/workadventure-back
+          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back
 
       - name: Replace version string
         run: |
@@ -141,10 +144,10 @@ jobs:
           file: back/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: mconf/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=mconf/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=mconf/workadventure-back:develop
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-back:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -158,11 +161,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ${{ CONTAINER_REGISTRY }}
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_TOKEN }}
 
       - uses: rlespinasse/github-slug-action@3.1.0
 
@@ -170,7 +174,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: mconf/workadventure-uploader
+          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -178,10 +182,10 @@ jobs:
         with:
           file: uploader/Dockerfile
           push: true
-          tags: mconf/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=mconf/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=mconf/workadventure-uploader:develop
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-uploader:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -198,11 +202,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ${{ CONTAINER_REGISTRY }}
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_TOKEN }}
 
       - uses: rlespinasse/github-slug-action@3.1.0
 
@@ -210,7 +215,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: mconf/workadventure-maps
+          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -219,10 +224,10 @@ jobs:
           context: maps/
           file: maps/Dockerfile
           push: true
-          tags: mconf/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=mconf/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=mconf/workadventure-maps:develop
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-maps:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -240,11 +245,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ${{ CONTAINER_REGISTRY }}
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_TOKEN }}
 
       - uses: rlespinasse/github-slug-action@3.1.0
 
@@ -252,7 +258,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: mconf/workadventure-map-storage
+          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -262,10 +268,10 @@ jobs:
           file: map-storage/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: mconf/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=mconf/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=mconf/workadventure-map-storage:develop
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-map-storage:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -283,11 +289,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
+      - name: Login to OCIR
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ${{ CONTAINER_REGISTRY }}
+          username: ${{ secrets.OCI_USERNAME }}
+          password: ${{ secrets.OCI_TOKEN }}
 
       - uses: rlespinasse/github-slug-action@3.1.0
 
@@ -295,7 +302,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: mconf/workadventure-ejabberd
+          images: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -304,9 +311,9 @@ jobs:
           context: xmpp/
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: mconf/workadventure-ejabberd:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+          tags: ${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
           cache-from: |
-            type=registry,ref=mconf/workadventure-ejabberd:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
-            type=registry,ref=mconf/workadventure-ejabberd:develop
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd:${{ github.event_name == 'pull_request' && env.GITHUB_HEAD_REF_SLUG || env.GITHUB_REF_SLUG }}
+            type=registry,ref=${{ CONTAINER_REGISTRY_ACCOUNT }}/workadventure-ejabberd:develop
           cache-to: type=inline
           labels: ${{ steps.meta.outputs.labels }}
