@@ -36,6 +36,7 @@ import type { GameMapFrontWrapper } from "./GameMap/GameMapFrontWrapper";
 import type { GameScene } from "./GameScene";
 import { AreasPropertiesListener } from "./MapEditor/AreasPropertiesListener";
 import { gameManager } from "./GameManager";
+import { isMediaBreakpointUp } from "../../Utils/BreakpointsUtils";
 
 export interface OpenCoWebsite {
     actionId: string;
@@ -210,20 +211,39 @@ export class GameMapPropertiesListener {
                     return;
                 }
             }
-            inBbbStore.set(true);
-            bbbFactory.setStopped(false);
-            bbbFactory
-                .parametrizeMeetingId(newValue as string)
-                .then((hashedMeetingId) => {
-                    if (this.scene.connection === undefined) {
-                        throw new Error("No more connection to open BBB");
-                    }
-                    return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
-                })
-                .then((bbbAnswer) => {
-                    bbbFactory.start(bbbAnswer.clientURL);
-                })
-                .catch((e) => console.error(e));
+
+            // let isMobile = isMediaBreakpointUp("md");
+            // setting it to mobile always for testing purposes
+            let isMobile = true;
+            if (isMobile) {
+                bbbFactory
+                    .parametrizeMeetingId(newValue as string)
+                    .then((hashedMeetingId) => {
+                        if (this.scene.connection === undefined) {
+                            throw new Error("No more connection to open BBB");
+                        }
+                        return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
+                    })
+                    .then((bbbAnswer) => {
+                        scriptUtils.openTab("br.rnp.conferenciawebmobile://direct-join/" + bbbAnswer.clientURL);
+                    })
+                    .catch((e) => console.error(e));
+            } else {
+                inBbbStore.set(true);
+                bbbFactory.setStopped(false);
+                bbbFactory
+                    .parametrizeMeetingId(newValue as string)
+                    .then((hashedMeetingId) => {
+                        if (this.scene.connection === undefined) {
+                            throw new Error("No more connection to open BBB");
+                        }
+                        return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
+                    })
+                    .then((bbbAnswer) => {
+                        bbbFactory.start(bbbAnswer.clientURL);
+                    })
+                    .catch((e) => console.error(e));
+            }
         });
 
         this.gameMapFrontWrapper.onPropertyChange(GameMapProperties.EXIT_SCENE_URL, (newValue) => {
