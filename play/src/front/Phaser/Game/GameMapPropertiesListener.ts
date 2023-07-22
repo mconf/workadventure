@@ -214,18 +214,28 @@ export class GameMapPropertiesListener {
 
             let isMobile = isMediaBreakpointUp("md");
             if (isMobile) {
-                bbbFactory
-                    .parametrizeMeetingId(newValue as string)
-                    .then((hashedMeetingId) => {
-                        if (this.scene.connection === undefined) {
-                            throw new Error("No more connection to open BBB");
-                        }
-                        return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
-                    })
-                    .then((bbbAnswer) => {
-                        scriptUtils.openTab("br.rnp.conferenciawebmobile://direct-join/" + bbbAnswer.clientURL.replace(/^https?:\/\//, ''));
-                    })
-                    .catch((e) => console.error(e));
+                let message = allProps.get(GameMapProperties.OPEN_WEBSITE_TRIGGER_MESSAGE);
+                if (message === undefined) {
+                    message = get(LL).trigger.newTab();
+                }
+                layoutManagerActionStore.addAction({
+                    uuid: "openTab",
+                    type: "message",
+                    message: message,
+                    callback: () => bbbFactory
+                        .parametrizeMeetingId(newValue as string)
+                        .then((hashedMeetingId) => {
+                            if (this.scene.connection === undefined) {
+                                throw new Error("No more connection to open BBB");
+                            }
+                            return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
+                        })
+                        .then((bbbAnswer) => {
+                            scriptUtils.openTab("br.rnp.conferenciawebmobile://direct-join/" + bbbAnswer.clientURL.replace(/^https?:\/\//, ''));
+                        })
+                        .catch((e) => console.error(e)),
+                    userInputManager: this.scene.userInputManager,
+                });
             } else {
                 inBbbStore.set(true);
                 bbbFactory.setStopped(false);
