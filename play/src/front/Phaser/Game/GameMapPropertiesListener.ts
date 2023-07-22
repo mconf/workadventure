@@ -212,9 +212,7 @@ export class GameMapPropertiesListener {
                 }
             }
 
-            // let isMobile = isMediaBreakpointUp("md");
-            // setting it to mobile always for testing purposes
-            let isMobile = true;
+            let isMobile = isMediaBreakpointUp("md");
             if (isMobile) {
                 bbbFactory
                     .parametrizeMeetingId(newValue as string)
@@ -225,7 +223,7 @@ export class GameMapPropertiesListener {
                         return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
                     })
                     .then((bbbAnswer) => {
-                        scriptUtils.openTab("br.rnp.conferenciawebmobile://direct-join/" + bbbAnswer.clientURL);
+                        scriptUtils.openTab("br.rnp.conferenciawebmobile://direct-join/" + bbbAnswer.clientURL.replace(/^https?:\/\//, ''));
                     })
                     .catch((e) => console.error(e));
             } else {

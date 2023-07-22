@@ -917,7 +917,6 @@ export class SocketManager {
         const clientURL = api.administration.join(user.name, meetingId, isAdmin ? moderatorPW : attendeePW, {
             ...joinParams,
             userID: user.id,
-            joinViaHtml5: true,
         });
         console.log(
             `User "${user.name}" (${user.uuid}) joined the BBB meeting "${meetingName}" as ${
