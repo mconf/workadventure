@@ -212,6 +212,9 @@ export class GameMapPropertiesListener {
                 }
             }
 
+            inBbbStore.set(true);
+            bbbFactory.setStopped(false);
+
             let isMobile = isMediaBreakpointUp("md");
             if (isMobile) {
                 let message = allProps.get(GameMapProperties.OPEN_WEBSITE_TRIGGER_MESSAGE);
@@ -237,8 +240,6 @@ export class GameMapPropertiesListener {
                     userInputManager: this.scene.userInputManager,
                 });
             } else {
-                inBbbStore.set(true);
-                bbbFactory.setStopped(false);
                 bbbFactory
                     .parametrizeMeetingId(newValue as string)
                     .then((hashedMeetingId) => {
