@@ -44,4 +44,6 @@ export interface FrontConfigurationInterface {
     FEATURE_FLAG_BROADCAST_AREAS: boolean;
     PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: number;
     PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: number;
+    BBB_MOBILE_ENABLED: boolean;
+    BBB_MOBILE_DIRECT_JOIN_PREFIX: string | undefined;
 }

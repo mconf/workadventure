@@ -12,7 +12,12 @@ import { ON_ACTION_TRIGGER_BUTTON, ON_ICON_TRIGGER_BUTTON } from "../../WebRtc/L
 import type { CoWebsite } from "../../WebRtc/CoWebsite/CoWebsite";
 import { SimpleCoWebsite } from "../../WebRtc/CoWebsite/SimpleCoWebsite";
 import { bbbFactory } from "../../WebRtc/BBBFactory";
-import { JITSI_PRIVATE_MODE, JITSI_URL } from "../../Enum/EnvironmentVariable";
+import {
+    JITSI_PRIVATE_MODE,
+    JITSI_URL,
+    BBB_MOBILE_ENABLED,
+    BBB_MOBILE_DIRECT_JOIN_PREFIX
+} from "../../Enum/EnvironmentVariable";
 import { JitsiCoWebsite } from "../../WebRtc/CoWebsite/JitsiCoWebsite";
 import { audioManagerFileStore, audioManagerVisibilityStore } from "../../Stores/AudioManagerStore";
 import { iframeListener } from "../../Api/IframeListener";
@@ -216,7 +221,7 @@ export class GameMapPropertiesListener {
             bbbFactory.setStopped(false);
 
             let isMobile = isMediaBreakpointUp("md");
-            if (isMobile) {
+            if (BBB_MOBILE_ENABLED && isMobile) {
                 let message = allProps.get(GameMapProperties.OPEN_WEBSITE_TRIGGER_MESSAGE);
                 if (message === undefined) {
                     message = get(LL).trigger.newTab();
@@ -234,7 +239,7 @@ export class GameMapPropertiesListener {
                             return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
                         })
                         .then((bbbAnswer) => {
-                            scriptUtils.openTab("br.rnp.conferenciawebmobile://direct-join/" + bbbAnswer.clientURL.replace(/^https?:\/\//, ''));
+                            scriptUtils.openTab(BBB_MOBILE_DIRECT_JOIN_PREFIX + bbbAnswer.clientURL.replace(/^https?:\/\//, ''));
                         })
                         .catch((e) => console.error(e)),
                     userInputManager: this.scene.userInputManager,

@@ -123,6 +123,8 @@ services:
             FEATURE_FLAG_BROADCAST_AREAS: "true"
             PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: "$PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS"
             PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: "$PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS"
+            BBB_MOBILE_ENABLED: "$BBB_MOBILE_ENABLED"
+            BBB_MOBILE_DIRECT_JOIN_PREFIX: "$BBB_MOBILE_DIRECT_JOIN_PREFIX"
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.front.rule=Host(`front.workadventure.localhost`)"

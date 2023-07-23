@@ -108,6 +108,9 @@ export const EnvironmentVariables = z.object({
     // Limit bandwidth environment variables
     PEER_VIDEO_MAX_BANDWIDTH_KBITS_PS: PositiveIntAsString.optional(),
     PEER_SCREENSHARE_MAX_BANDWIDTH_KBITS_PS: PositiveIntAsString.optional(),
+
+    BBB_MOBILE_ENABLED: BoolAsString.optional().transform((val) => toBool(val, false)),
+    BBB_MOBILE_DIRECT_JOIN_PREFIX: z.string().optional(),
 });
 
 export type EnvironmentVariables = z.infer<typeof EnvironmentVariables>;
