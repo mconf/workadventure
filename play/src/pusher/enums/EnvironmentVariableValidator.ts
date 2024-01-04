@@ -129,6 +129,10 @@ export const EnvironmentVariables = z.object({
     PEER_VIDEO_RECOMMENDED_BANDWIDTH: PositiveIntAsString.optional(),
     PEER_SCREEN_SHARE_LOW_BANDWIDTH: PositiveIntAsString.optional(),
     PEER_SCREEN_SHARE_RECOMMENDED_BANDWIDTH: PositiveIntAsString.optional(),
+
+    // Allow bbb-mobile-sdk direct join
+    BBB_MOBILE_ENABLED: BoolAsString.optional().transform((val) => toBool(val, false)),
+    BBB_MOBILE_DIRECT_JOIN_PREFIX: z.string().optional(),
 });
 
 export type EnvironmentVariables = z.infer<typeof EnvironmentVariables>;
