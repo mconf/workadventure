@@ -52,4 +52,6 @@ export interface FrontConfigurationInterface {
     PEER_VIDEO_RECOMMENDED_BANDWIDTH: number;
     PEER_SCREEN_SHARE_LOW_BANDWIDTH: number;
     PEER_SCREEN_SHARE_RECOMMENDED_BANDWIDTH: number;
+    BBB_MOBILE_ENABLED: boolean;
+    BBB_MOBILE_DIRECT_JOIN_PREFIX: string | undefined;
 }
