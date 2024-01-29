@@ -12,7 +12,12 @@ import { ON_ACTION_TRIGGER_BUTTON, ON_ICON_TRIGGER_BUTTON } from "../../WebRtc/L
 import type { CoWebsite } from "../../WebRtc/CoWebsite/CoWebsite";
 import { SimpleCoWebsite } from "../../WebRtc/CoWebsite/SimpleCoWebsite";
 import { bbbFactory } from "../../WebRtc/BBBFactory";
-import { JITSI_PRIVATE_MODE, JITSI_URL } from "../../Enum/EnvironmentVariable";
+import {
+    JITSI_PRIVATE_MODE,
+    JITSI_URL,
+    BBB_MOBILE_ENABLED,
+    BBB_MOBILE_DIRECT_JOIN_PREFIX
+} from "../../Enum/EnvironmentVariable";
 import { JitsiCoWebsite } from "../../WebRtc/CoWebsite/JitsiCoWebsite";
 import { audioManagerFileStore, audioManagerVisibilityStore } from "../../Stores/AudioManagerStore";
 import { iframeListener } from "../../Api/IframeListener";
@@ -26,6 +31,7 @@ import type { GameMapFrontWrapper } from "./GameMap/GameMapFrontWrapper";
 import type { GameScene } from "./GameScene";
 import { AreasPropertiesListener } from "./MapEditor/AreasPropertiesListener";
 import { gameManager } from "./GameManager";
+import { isMediaBreakpointUp } from "../../Utils/BreakpointsUtils";
 
 export interface OpenCoWebsite {
     actionId: string;
@@ -207,20 +213,48 @@ export class GameMapPropertiesListener {
                     return;
                 }
             }
+
             inBbbStore.set(true);
             bbbFactory.setStopped(false);
-            bbbFactory
-                .parametrizeMeetingId(newValue as string)
-                .then((hashedMeetingId) => {
-                    if (this.scene.connection === undefined) {
-                        throw new Error("No more connection to open BBB");
-                    }
-                    return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
-                })
-                .then((bbbAnswer) => {
-                    bbbFactory.start(bbbAnswer.clientURL);
-                })
-                .catch((e) => console.error(e));
+
+            let isMobile = isMediaBreakpointUp("md");
+            if (BBB_MOBILE_ENABLED && isMobile) {
+                let message = allProps.get(GameMapProperties.OPEN_WEBSITE_TRIGGER_MESSAGE);
+                if (message === undefined) {
+                    message = get(LL).trigger.newTab();
+                }
+                layoutManagerActionStore.addAction({
+                    uuid: "openTab",
+                    type: "message",
+                    message: message,
+                    callback: () => bbbFactory
+                        .parametrizeMeetingId(newValue as string)
+                        .then((hashedMeetingId) => {
+                            if (this.scene.connection === undefined) {
+                                throw new Error("No more connection to open BBB");
+                            }
+                            return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
+                        })
+                        .then((bbbAnswer) => {
+                            scriptUtils.openTab(BBB_MOBILE_DIRECT_JOIN_PREFIX + bbbAnswer.clientURL.replace(/^https?:\/\//, ''));
+                        })
+                        .catch((e) => console.error(e)),
+                    userInputManager: this.scene.userInputManager,
+                });
+            } else {
+                bbbFactory
+                    .parametrizeMeetingId(newValue as string)
+                    .then((hashedMeetingId) => {
+                        if (this.scene.connection === undefined) {
+                            throw new Error("No more connection to open BBB");
+                        }
+                        return this.scene.connection.queryBBBMeetingUrl(hashedMeetingId, allProps);
+                    })
+                    .then((bbbAnswer) => {
+                        bbbFactory.start(bbbAnswer.clientURL);
+                    })
+                    .catch((e) => console.error(e));
+            }
         });
 
         this.gameMapFrontWrapper.onPropertyChange(GameMapProperties.EXIT_SCENE_URL, (newValue) => {

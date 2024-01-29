@@ -34,7 +34,7 @@
             cowebsiteName = "Jitsi meeting";
         } else if (isBBB) {
             icon.src = meetingIcon;
-            cowebsiteName = "BigBlueButton meeting";
+            cowebsiteName = "Elos meeting";
         } else {
             icon.src = `${ICON_URL}/icon?url=${encodeURIComponent(
                 coWebsite.getUrl().toString()
