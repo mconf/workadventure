@@ -933,7 +933,16 @@ export class SocketManager {
 
         // This is idempotent, so we call it on each join in order to be sure that the meeting exists.
         const createOptions = { attendeePW, moderatorPW, record: true };
-        const createURL = api.administration.create(meetingName, meetingId, createOptions);
+        const metadata = user.tags
+            .filter((tag) => tag.startsWith("bbb-meta-"))
+            .map((tag) => tag.replace("bbb-meta-", "meta_"));
+        const metadataHash: Record<string, string> = {};
+        metadata.forEach((item) => {
+            const [key, value] = item.split("=");
+            metadataHash[key] = value;
+        });
+
+        const createURL = api.administration.create(meetingName, meetingId, { ...createOptions, ...metadataHash });
         await BigbluebuttonJs.http(createURL);
 
         const joinParams: Record<string, string> = {};
