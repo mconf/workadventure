@@ -891,7 +891,7 @@ export class SocketManager {
         user: User,
         joinBBBMeetingQuery: JoinBBBMeetingQuery
     ): Promise<JoinBBBMeetingAnswer> {
-        const meetingId = joinBBBMeetingQuery.meetingId;
+        let meetingId = joinBBBMeetingQuery.meetingId;
         const localMeetingId = joinBBBMeetingQuery.localMeetingId;
         const meetingName = joinBBBMeetingQuery.meetingName;
         const bbbSettings = gameRoom.getBbbSettings();
@@ -917,6 +917,21 @@ export class SocketManager {
             }
         }
 
+        // Fetch metadata from user tags
+        const metadata = user.tags
+            .filter((tag) => tag.startsWith("bbb-meta-"))
+            .map((tag) => tag.replace("bbb-meta-", "meta_"));
+        const metadataHash: Record<string, string> = {};
+        metadata.forEach((item) => {
+            const [key, value] = item.split("=");
+            metadataHash[key] = value;
+        });
+
+        // Use the room-handler tag to prefix the meetingId
+        if (metadataHash["meta_room-handler"]) {
+            meetingId = `${metadataHash["meta_room-handler"]}-${meetingId}`;
+        }
+
         const api = BigbluebuttonJs.api(bbbSettings.url, bbbSettings.secret);
         // It seems bbb-api is limiting password length to 50 chars
         const maxPWLen = 50;
@@ -933,14 +948,6 @@ export class SocketManager {
 
         // This is idempotent, so we call it on each join in order to be sure that the meeting exists.
         const createOptions = { attendeePW, moderatorPW, record: true };
-        const metadata = user.tags
-            .filter((tag) => tag.startsWith("bbb-meta-"))
-            .map((tag) => tag.replace("bbb-meta-", "meta_"));
-        const metadataHash: Record<string, string> = {};
-        metadata.forEach((item) => {
-            const [key, value] = item.split("=");
-            metadataHash[key] = value;
-        });
 
         const createURL = api.administration.create(meetingName, meetingId, { ...createOptions, ...metadataHash });
         await BigbluebuttonJs.http(createURL);
