@@ -768,6 +768,32 @@ export class GameRoom implements BrothersFinder {
         throw new Error("Unexpected room redirect received or error while querying map details");
     }
 
+    /**
+     * Connects to the admin server to fetch map details with user context.
+     * This version passes user information to the admin API to get user-specific settings.
+     */
+    private static async getMapDetailsWithUser(roomUrl: string, user: User): Promise<MapDetailsData> {
+        if (!ADMIN_API_URL) {
+            // Fall back to the regular method if no admin API
+            return GameRoom.getMapDetails(roomUrl);
+        }
+
+        const userId = user.uuid;
+        const result = isMapDetailsData.safeParse(await adminApi.fetchMapDetails(roomUrl, userId));
+
+        if (result.success) {
+            return result.data;
+        }
+
+        console.error(result.error.issues);
+        console.error("Unexpected room redirect or error received while querying map details with user", result);
+        Sentry.captureException(result.error.issues);
+        Sentry.captureException(
+            `Unexpected room redirect or error received while querying map details with user ${JSON.stringify(result)}`
+        );
+        throw new Error("Unexpected room redirect received or error while querying map details with user");
+    }
+
     private mapPromise: Promise<ITiledMap> | undefined;
 
     /**
@@ -1050,17 +1076,47 @@ export class GameRoom implements BrothersFinder {
         return undefined;
     }
 
-    public getBbbSettings(): MapBbbData | undefined {
+    public async getBbbSettings(user?: User): Promise<MapBbbData | undefined> {
+        // If we have a user, try to get fresh settings from admin API
+        if (user && ADMIN_API_URL) {
+            try {
+                console.log(`Attempting to fetch fresh BBB settings for user: ${user.name} (${user.uuid})`);
+                const mapDetails = await GameRoom.getMapDetailsWithUser(this._roomUrl, user);
+                if (mapDetails.thirdParty?.bbb) {
+                    console.log(`Using fresh BBB settings from Admin API for user: `, {
+                        url: mapDetails.thirdParty.bbb.url,
+                        secret: "[REDACTED]",
+                    });
+                    return mapDetails.thirdParty.bbb;
+                }
+            } catch (e) {
+                console.warn("Failed to fetch fresh BBB settings, falling back to stored settings", e);
+            }
+        }
+
+        // Fall back to stored settings
         const bbb = this.thirdParty?.bbb;
         if (bbb) {
+            console.log(`Using stored BBB settings from Admin API: `, {
+                url: bbb.url,
+                secret: "[REDACTED]",
+            });
             return bbb;
         }
+
+        // Environment variable fallback
         if (BBB_URL && BBB_SECRET) {
+            console.log(`Using BBB settings from environment variables: `, {
+                url: BBB_URL,
+                secret: "[REDACTED]",
+            });
             return {
                 url: BBB_URL,
                 secret: BBB_SECRET,
             };
         }
+
+        console.log(`No BBB settings available`);
         return undefined;
     }
 
