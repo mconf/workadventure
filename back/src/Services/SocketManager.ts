@@ -894,7 +894,7 @@ export class SocketManager {
         let meetingId = joinBBBMeetingQuery.meetingId;
         const localMeetingId = joinBBBMeetingQuery.localMeetingId;
         const meetingName = joinBBBMeetingQuery.meetingName;
-        const bbbSettings = gameRoom.getBbbSettings();
+        const bbbSettings = await gameRoom.getBbbSettings(user);
 
         if (bbbSettings === undefined) {
             throw new Error(

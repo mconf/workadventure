@@ -11,14 +11,26 @@ import * as Sentry from "@sentry/node";
 import { ADMIN_API_TOKEN, ADMIN_API_URL } from "../Enum/EnvironmentVariable";
 
 class AdminApi {
-    async fetchMapDetails(playUri: string): Promise<MapDetailsData | RoomRedirect | ErrorApiData> {
+    async fetchMapDetails(
+        playUri: string,
+        userId?: string,
+        accessToken?: string
+    ): Promise<MapDetailsData | RoomRedirect | ErrorApiData> {
         if (!ADMIN_API_URL) {
             return Promise.reject(new Error("No admin backoffice set!"));
         }
 
-        const params: { playUri: string } = {
+        const params: { playUri: string; userId?: string; accessToken?: string } = {
             playUri,
         };
+
+        // Add user parameters if provided
+        if (userId) {
+            params.userId = userId;
+        }
+        if (accessToken) {
+            params.accessToken = accessToken;
+        }
 
         try {
             const res = await axios.get(ADMIN_API_URL + "/api/map", {
