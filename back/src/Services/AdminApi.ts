@@ -20,8 +20,10 @@ class AdminApi {
             return Promise.reject(new Error("No admin backoffice set!"));
         }
 
-        const params: { playUri: string; userId?: string; accessToken?: string } = {
+        // the `fromBackend` parameter is used to identify the component making the request
+        const params: { playUri: string; userId?: string; accessToken?: string; fromBackend: boolean } = {
             playUri,
+            fromBackend: true,
         };
 
         // Add user parameters if provided
