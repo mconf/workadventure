@@ -291,6 +291,8 @@ class AdminApi implements AdminInterface {
             const mapDetailData = isMapDetailsData.safeParse(res.data);
 
             if (mapDetailData.success) {
+                // Remove BBB data, the secret should not be exposed to the frontend
+                mapDetailData!.data!.thirdParty!.bbb = null;
                 return mapDetailData.data;
             }
 
