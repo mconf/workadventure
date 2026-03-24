@@ -638,6 +638,7 @@ icon:
 # mapstorage service
 # #########################################################
 mapstorage:
+  enabled: true
   replicaCount: 1
 
   image:

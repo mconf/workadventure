@@ -30,9 +30,17 @@ class AdminApi {
             return Promise.reject(new Error("No admin backoffice set!"));
         }
 
-        const params: { playUri: string } = {
+        const params: { playUri: string; userId?: string; accessToken?: string } = {
             playUri,
         };
+
+        // Add user parameters if provided
+        if (userId) {
+            params.userId = userId;
+        }
+        if (accessToken) {
+            params.accessToken = accessToken;
+        }
 
         try {
             const res = await axios.get(new URL("api/map", ADMIN_API_URL).toString(), {
