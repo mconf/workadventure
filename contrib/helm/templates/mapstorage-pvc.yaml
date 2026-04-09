@@ -1,4 +1,4 @@
-{{- if .Values.mapstorage.persistence.enabled }}
+{{- if and .Values.mapstorage.enabled .Values.mapstorage.persistence.enabled }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:

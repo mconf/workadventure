@@ -23,10 +23,6 @@ on:
       short_name:
         required: true
         type: string
-      sentry_project:
-        required: false
-        type: string
-        default: ""
       push-to-registry:
         required: true
         type: boolean
@@ -50,12 +46,12 @@ jobs:
         if: ${{ inputs.push-to-registry != true }}
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to GHCR
+      - name: Login to DockerHub
         uses: docker/login-action@v3
+        if: ${{ inputs.push-to-registry == true }}
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - uses: rlespinasse/github-slug-action@4.2.3
 
@@ -93,13 +89,11 @@ jobs:
             type=inline
 #           type=gha,mode=max
           labels: ${{ steps.meta.outputs.labels }}
-          secrets: |
-            "SENTRY_PROJECT=${{ inputs.sentry_project }}"
-            "SENTRY_URL=${{ secrets.SENTRY_URL }}"
-            "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}"
-            "SENTRY_ORG=${{ secrets.SENTRY_ORG }}"
-            "SENTRY_ENVIRONMENT=${{ github.event_name == 'release' && 'production' || env.GITHUB_REF_NAME == 'master' && 'staging' || null }}"
-            "SENTRY_RELEASE=${{ github.event_name == 'release' && env.GITHUB_REF_NAME || format('{0}@{1}', env.GITHUB_REF_NAME_SLUG, env.GITHUB_SHA) }}"
+          # Some images (the play image) can be built in two modes: normal mode and fast mode (without Legacy browser support)
+          # We use the FAST_BUILD build-arg to control this.
+          # We use fast build when the image is just tested in CI and not pushed to the registry.
+          build-args: |
+            FAST_BUILD=${{ inputs.fast_build == true && 'true' || '' }}
           outputs: ${{ inputs.push-to-registry != true && format('type=docker,dest=/tmp/{0}.tar', inputs.short_name) || '' }}
           provenance: false # Disable provenance attestation generation to not generate a manifest list (so we can merge later)
           sbom: false # Disable SBOM generation to not generate a manifest list (so we can merge later)

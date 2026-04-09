@@ -1,0 +1,73 @@
+name: Build Docker images and push to DockerHub
+
+on:
+  push:
+    branches: [master, develop]
+  release:
+    types: [created]
+  pull_request:
+    types: [labeled, synchronize, opened, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-play:
+    uses: ./.github/workflows/build-multi-arch-image.yml
+    secrets: inherit
+    with:
+      dockerio-image-name: 'mconf/workadventure-play'
+      # FIXME: Final build should only build on master or tags
+      final_build: ${{ github.event_name == 'push' || github.event_name == 'release' || (github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'deploy') || contains(github.event.pull_request.labels.*.name, 'deploy-with-livekit-saas') || contains(github.event.pull_request.labels.*.name, 'build') || contains(github.event.pull_request.labels.*.name, 'linked_to_saas_branch'))) }}
+      dockerfile: play/Dockerfile
+      short_name: play
+      push-to-registry: true
+      context: ./
+      # Fast build for PRs that do NOT have the 'build-legacy-browsers' label
+      fast_build: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'build-legacy-browsers') == false }}
+
+
+  build-back:
+    uses: ./.github/workflows/build-multi-arch-image.yml
+    secrets: inherit
+    with:
+      dockerio-image-name: 'mconf/workadventure-back'
+      final_build: ${{ github.event_name == 'push' || github.event_name == 'release' || github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'deploy') || contains(github.event.pull_request.labels.*.name, 'deploy-with-livekit-saas') || contains(github.event.pull_request.labels.*.name, 'build') || contains(github.event.pull_request.labels.*.name, 'linked_to_saas_branch')) }}
+      dockerfile: back/Dockerfile
+      short_name: back
+      push-to-registry: true
+      context: ./
+
+  build-uploader:
+    uses: ./.github/workflows/build-multi-arch-image.yml
+    secrets: inherit
+    with:
+      dockerio-image-name: 'mconf/workadventure-uploader'
+      final_build: ${{ github.event_name == 'push' || github.event_name == 'release' || github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'deploy') || contains(github.event.pull_request.labels.*.name, 'deploy-with-livekit-saas') || contains(github.event.pull_request.labels.*.name, 'build') || contains(github.event.pull_request.labels.*.name, 'linked_to_saas_branch')) }}
+      dockerfile: uploader/Dockerfile
+      short_name: uploader
+      push-to-registry: true
+      context: ./
+
+  build-maps:
+    uses: ./.github/workflows/build-multi-arch-image.yml
+    secrets: inherit
+    with:
+      dockerio-image-name: 'mconf/workadventure-maps'
+      final_build: ${{ github.event_name == 'push' || github.event_name == 'release' || github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'deploy') || contains(github.event.pull_request.labels.*.name, 'deploy-with-livekit-saas') || contains(github.event.pull_request.labels.*.name, 'build') || contains(github.event.pull_request.labels.*.name, 'linked_to_saas_branch')) }}
+      dockerfile: maps/Dockerfile
+      short_name: maps
+      push-to-registry: true
+      context: ./maps
+
+  build-map-storage:
+    uses: ./.github/workflows/build-multi-arch-image.yml
+    secrets: inherit
+    with:
+      dockerio-image-name: 'mconf/workadventure-map-storage'
+      final_build: ${{ github.event_name == 'push' || github.event_name == 'release' || github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'deploy') || contains(github.event.pull_request.labels.*.name, 'deploy-with-livekit-saas') || contains(github.event.pull_request.labels.*.name, 'build') || contains(github.event.pull_request.labels.*.name, 'linked_to_saas_branch')) }}
+      dockerfile: map-storage/Dockerfile
+      short_name: map-storage
+      push-to-registry: true
+      context: ./
