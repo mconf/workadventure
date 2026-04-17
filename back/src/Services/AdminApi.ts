@@ -25,7 +25,7 @@ class AdminApi {
 
         return LivekitCredentialsResponse.parse(res.data);
     }
-    async fetchMapDetails(playUri: string): Promise<MapDetailsData | RoomRedirect | ErrorApiData> {
+    async fetchMapDetails(playUri: string, userId?: string, accessToken?: string): Promise<MapDetailsData | RoomRedirect | ErrorApiData> {
         if (!ADMIN_API_URL) {
             return Promise.reject(new Error("No admin backoffice set!"));
         }
